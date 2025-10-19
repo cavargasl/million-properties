@@ -5,6 +5,10 @@ export const PropertyService = (repository: PropertyRepository): PropertyReposit
     return await repository.getAll(filters);
   },
 
+  async getAllPaginated(filters, pagination) {
+    return await repository.getAllPaginated(filters, pagination);
+  },
+
   async getById(id) {
     if (!id) {
       return {

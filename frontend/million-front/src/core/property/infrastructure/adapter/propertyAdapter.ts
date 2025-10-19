@@ -4,6 +4,7 @@ import type {
   UpdatePropertyRequest,
   PropertyImage,
   PropertyTrace,
+  PaginationMetadata,
 } from '../../domain/property';
 import type {
   PropertyDto,
@@ -11,6 +12,7 @@ import type {
   UpdatePropertyDto,
   PropertyImageDto,
   PropertyTraceDto,
+  PaginatedResponseDto,
 } from '../propertyDto';
 import { transformDtoObject } from '@/core/shared/utils/transformDtoObject';
 
@@ -126,4 +128,26 @@ export const transformPropertyTraceFromDto = (
   return transformDtoObject<PropertyTraceDto, PropertyTrace>(dto, mapping)
     .nullOrEmptyToUndefined()
     .result();
+};
+
+/**
+ * Transforms PaginatedResponseDto from API to domain pagination format
+ */
+export const transformPaginatedPropertiesFromDto = (
+  dto: PaginatedResponseDto<PropertyDto>
+): { items: Property[]; pagination: PaginationMetadata } => {
+  const items = dto.data
+    .map(transformPropertyFromDto)
+    .filter((item): item is Property => item !== null);
+
+  const pagination: PaginationMetadata = {
+    pageNumber: dto.pageNumber,
+    pageSize: dto.pageSize,
+    totalRecords: dto.totalRecords,
+    totalPages: dto.totalPages,
+    hasNextPage: dto.hasNextPage,
+    hasPreviousPage: dto.hasPreviousPage,
+  };
+
+  return { items, pagination };
 };

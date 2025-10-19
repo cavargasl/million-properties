@@ -1,9 +1,11 @@
 import type {
   PropertyResponse,
   PropertiesResponse,
+  PaginatedPropertiesResponse,
   CreatePropertyRequest,
   UpdatePropertyRequest,
   PropertyFilters,
+  PaginationParams,
   PropertyImageResponse,
   PropertyImagesResponse,
   PropertyTraceResponse,
@@ -12,6 +14,7 @@ import type {
 
 export interface PropertyRepository {
   getAll(filters?: PropertyFilters): Promise<PropertiesResponse>;
+  getAllPaginated(filters?: PropertyFilters, pagination?: PaginationParams): Promise<PaginatedPropertiesResponse>;
   getById(id: string): Promise<PropertyResponse>;
   create(input: CreatePropertyRequest): Promise<PropertyResponse>;
   update(input: UpdatePropertyRequest): Promise<PropertyResponse>;

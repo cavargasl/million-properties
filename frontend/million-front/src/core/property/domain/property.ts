@@ -41,6 +41,20 @@ export interface PropertyFilters {
   ownerId?: string;
 }
 
+export interface PaginationParams {
+  pageNumber: number;
+  pageSize: number;
+}
+
+export interface PaginationMetadata {
+  pageNumber: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+}
+
 export interface PropertyResponse {
   data: Property | null;
   error: BaseError | null;
@@ -48,6 +62,14 @@ export interface PropertyResponse {
 
 export interface PropertiesResponse {
   data: Property[] | null;
+  error: BaseError | null;
+}
+
+export interface PaginatedPropertiesResponse {
+  data: {
+    items: Property[];
+    pagination: PaginationMetadata;
+  } | null;
   error: BaseError | null;
 }
 

@@ -5,8 +5,9 @@ import {
   transformPropertyFromDto,
   transformCreatePropertyToDto,
   transformUpdatePropertyToDto,
+  transformPaginatedPropertiesFromDto,
 } from './adapter/propertyAdapter';
-import type { PropertyDto } from './propertyDto';
+import type { PropertyDto, PaginatedResponseDto } from './propertyDto';
 
 export const axiosPropertyRepository: PropertyRepository = {
   async getAll(filters) {
@@ -21,6 +22,31 @@ export const axiosPropertyRepository: PropertyRepository = {
           .filter((item): item is NonNullable<typeof item> => item !== null) || [];
 
       return { data: transformedData, error: null };
+    } catch (error) {
+      return { data: null, error: transformError(error) };
+    }
+  },
+
+  async getAllPaginated(filters, pagination) {
+    try {
+      // Use backend pagination endpoint
+      const params = {
+        ...filters,
+        pageNumber: pagination?.pageNumber || 1,
+        pageSize: pagination?.pageSize || 10,
+      };
+
+      const { data } = await apiClient.get<PaginatedResponseDto<PropertyDto>>(
+        `${API_ENDPOINTS.PROPERTIES}/search/paginated`,
+        { params }
+      );
+
+      const transformedData = transformPaginatedPropertiesFromDto(data);
+
+      return {
+        data: transformedData,
+        error: null,
+      };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }

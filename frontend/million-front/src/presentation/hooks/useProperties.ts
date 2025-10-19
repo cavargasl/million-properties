@@ -9,6 +9,7 @@ import type {
   PropertyFilters,
   CreatePropertyRequest,
   UpdatePropertyRequest,
+  PaginationParams,
 } from '@/core/property';
 
 // Create service instance
@@ -19,6 +20,8 @@ export const propertyKeys = {
   all: ['properties'] as const,
   lists: () => [...propertyKeys.all, 'list'] as const,
   list: (filters?: PropertyFilters) => [...propertyKeys.lists(), filters] as const,
+  paginated: (filters?: PropertyFilters, pagination?: PaginationParams) =>
+    [...propertyKeys.lists(), 'paginated', { filters, pagination }] as const,
   details: () => [...propertyKeys.all, 'detail'] as const,
   detail: (id: string) => [...propertyKeys.details(), id] as const,
 };
@@ -31,6 +34,23 @@ export function useProperties(filters?: PropertyFilters) {
     queryKey: propertyKeys.list(filters),
     queryFn: async () => {
       const result = await propertyService.getAll(filters);
+      if (result.error) throw result.error;
+      return result.data;
+    },
+  });
+}
+
+/**
+ * Hook to fetch paginated properties with filters
+ */
+export function usePropertiesPaginated(
+  filters?: PropertyFilters,
+  pagination?: PaginationParams
+) {
+  return useQuery({
+    queryKey: propertyKeys.paginated(filters, pagination),
+    queryFn: async () => {
+      const result = await axiosPropertyRepository.getAllPaginated(filters, pagination);
       if (result.error) throw result.error;
       return result.data;
     },

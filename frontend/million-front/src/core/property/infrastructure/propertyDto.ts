@@ -44,3 +44,14 @@ export interface PropertyTraceDto {
   tax: number;
   propertyId: string;
 }
+
+// Pagination DTOs that match the backend
+export interface PaginatedResponseDto<T> {
+  pageNumber: number;
+  pageSize: number;
+  totalRecords: number;
+  totalPages: number;
+  data: T[];
+  hasPreviousPage: boolean;
+  hasNextPage: boolean;
+}
