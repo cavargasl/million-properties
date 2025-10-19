@@ -2,6 +2,9 @@
 
 import Link from 'next/link';
 import { ArrowRight, Building2, Users, FileText, TrendingUp } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 
 const features = [
   {
@@ -31,10 +34,10 @@ export function HeroSection() {
     <div className="flex flex-col gap-16 py-12">
       {/* Hero Principal */}
       <section className="flex flex-col items-center text-center gap-6 px-4">
-        <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium">
+        <Badge variant="secondary" className="gap-2">
           <Building2 className="h-4 w-4" />
           <span>Sistema de Gestión Inmobiliaria</span>
-        </div>
+        </Badge>
 
         <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-4xl">
           Gestiona tus propiedades de forma{' '}
@@ -47,19 +50,17 @@ export function HeroSection() {
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 mt-4">
-          <Link
-            href="/properties"
-            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            Ver Propiedades
-            <ArrowRight className="h-4 w-4" />
-          </Link>
-          <Link
-            href="/owners"
-            className="inline-flex items-center justify-center gap-2 border border-input hover:bg-accent hover:text-accent-foreground px-6 py-3 rounded-lg font-medium transition-colors"
-          >
-            Gestionar Propietarios
-          </Link>
+          <Button asChild size="lg">
+            <Link href="/properties">
+              Ver Propiedades
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Link>
+          </Button>
+          <Button asChild variant="outline" size="lg">
+            <Link href="/owners">
+              Gestionar Propietarios
+            </Link>
+          </Button>
         </div>
       </section>
 
@@ -68,34 +69,47 @@ export function HeroSection() {
         {features.map((feature) => {
           const Icon = feature.icon;
           return (
-            <div
-              key={feature.title}
-              className="flex flex-col items-start gap-3 p-6 rounded-lg border border-border bg-card hover:shadow-md transition-shadow"
-            >
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Icon className="h-6 w-6 text-primary" />
-              </div>
-              <h3 className="font-semibold text-lg">{feature.title}</h3>
-              <p className="text-sm text-muted-foreground">{feature.description}</p>
-            </div>
+            <Card key={feature.title} className="hover:shadow-md transition-shadow">
+              <CardHeader>
+                <div className="p-2 bg-primary/10 rounded-lg w-fit">
+                  <Icon className="h-6 w-6 text-primary" />
+                </div>
+                <CardTitle className="text-lg">{feature.title}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription>{feature.description}</CardDescription>
+              </CardContent>
+            </Card>
           );
         })}
       </section>
 
       {/* Stats Section */}
       <section className="flex flex-col sm:flex-row justify-center gap-8 sm:gap-12 px-4 py-8 border-t border-border">
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-3xl sm:text-4xl font-bold">1000+</p>
-          <p className="text-sm text-muted-foreground">Propiedades Gestionadas</p>
-        </div>
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-3xl sm:text-4xl font-bold">500+</p>
-          <p className="text-sm text-muted-foreground">Propietarios Activos</p>
-        </div>
-        <div className="flex flex-col items-center gap-1">
-          <p className="text-3xl sm:text-4xl font-bold">99.9%</p>
-          <p className="text-sm text-muted-foreground">Disponibilidad</p>
-        </div>
+        <Card className="text-center w-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-3xl sm:text-4xl">1000+</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>Propiedades Gestionadas</CardDescription>
+          </CardContent>
+        </Card>
+        <Card className="text-center w-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-3xl sm:text-4xl">500+</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>Propietarios Activos</CardDescription>
+          </CardContent>
+        </Card>
+        <Card className="text-center w-sm">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-3xl sm:text-4xl">99.9%</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CardDescription>Disponibilidad</CardDescription>
+          </CardContent>
+        </Card>
       </section>
     </div>
   );

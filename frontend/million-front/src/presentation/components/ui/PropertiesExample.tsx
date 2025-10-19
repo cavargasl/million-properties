@@ -1,69 +1,101 @@
 'use client';
 
 import { useProperties } from '@/presentation/hooks';
-import { Building2, Loader2 } from 'lucide-react';
+import { Building2, Loader2, AlertCircle, DollarSign, Calendar, Hash } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 export function PropertiesExample() {
   const { data: properties, isLoading, error } = useProperties();
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {[...Array(6)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className="h-6 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-20 w-full" />
+            </CardContent>
+          </Card>
+        ))}
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="bg-destructive/10 text-destructive p-4 rounded-lg">
-        <p className="font-semibold">Error al cargar propiedades</p>
-        <p className="text-sm">{error.message}</p>
-      </div>
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error al cargar propiedades</AlertTitle>
+        <AlertDescription>{error.message}</AlertDescription>
+      </Alert>
     );
   }
 
   if (!properties || properties.length === 0) {
     return (
-      <div className="text-center p-8 text-muted-foreground">
-        <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50" />
-        <p>No hay propiedades disponibles</p>
-      </div>
+      <Card>
+        <CardContent className="text-center p-12">
+          <Building2 className="h-12 w-12 mx-auto mb-4 opacity-50 text-muted-foreground" />
+          <CardTitle className="mb-2">No hay propiedades disponibles</CardTitle>
+          <CardDescription>
+            Aún no se han registrado propiedades en el sistema
+          </CardDescription>
+        </CardContent>
+      </Card>
     );
   }
 
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {properties.map((property) => (
-        <div
-          key={property.id}
-          className="border border-border rounded-lg p-6 hover:shadow-md transition-shadow"
-        >
-          <div className="flex items-start justify-between mb-4">
-            <div>
-              <h3 className="font-semibold text-lg">{property.name}</h3>
-              <p className="text-sm text-muted-foreground">{property.address}</p>
+        <Card key={property.id} className="hover:shadow-lg transition-shadow">
+          <CardHeader>
+            <div className="flex items-start justify-between">
+              <div className="flex-1">
+                <CardTitle className="text-xl">{property.name}</CardTitle>
+                <CardDescription className="mt-1">{property.address}</CardDescription>
+              </div>
+              <Badge variant="secondary" className="ml-2">
+                <Building2 className="h-3 w-3 mr-1" />
+                {property.year}
+              </Badge>
             </div>
-            <Building2 className="h-5 w-5 text-primary" />
-          </div>
-
-          <div className="space-y-2 text-sm">
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Precio:</span>
-              <span className="font-semibold">
-                ${property.price.toLocaleString('es-CO')}
-              </span>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <DollarSign className="h-4 w-4 text-primary" />
+                  <span className="text-sm text-muted-foreground">Precio</span>
+                </div>
+                <span className="font-bold text-lg">
+                  ${property.price.toLocaleString('es-CO')}
+                </span>
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm">
+                <Calendar className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Año de construcción:</span>
+                <span className="font-medium">{property.year}</span>
+              </div>
+              
+              <div className="flex items-center gap-2 text-sm">
+                <Hash className="h-4 w-4 text-muted-foreground" />
+                <span className="text-muted-foreground">Código interno:</span>
+                <Badge variant="outline" className="font-mono text-xs">
+                  {property.codeInternal}
+                </Badge>
+              </div>
             </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Año:</span>
-              <span>{property.year}</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Código:</span>
-              <span className="font-mono text-xs">{property.codeInternal}</span>
-            </div>
-          </div>
-        </div>
+          </CardContent>
+        </Card>
       ))}
     </div>
   );
