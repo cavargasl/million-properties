@@ -1,0 +1,626 @@
+@Million.API_HostAddress = https://localhost:7231
+@baseUrl = {{Million.API_HostAddress}}/api
+@propertyId = 
+@ownerId = 
+@imageId = 
+@traceId = 
+
+#######################################
+# OWNERS ENDPOINTS
+#######################################
+
+### Get All Owners
+GET {{baseUrl}}/owners
+Accept: application/json
+
+### Get Owner by ID
+GET {{baseUrl}}/owners/{{ownerId}}
+Accept: application/json
+
+### ? Create Owner - VÁLIDO
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "Calle Principal 123, Bogotá",
+  "photo": "https://example.com/photos/juan.jpg",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Create Owner - ERROR: Name vacío
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "",
+  "address": "Calle Principal 123",
+  "photo": "https://example.com/photos/juan.jpg",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Create Owner - ERROR: Name muy corto (1 carácter)
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "A",
+  "address": "Calle Principal 123",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Create Owner - ERROR: Name muy largo (>100 caracteres)
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Este es un nombre extremadamente largo que excede el límite de 100 caracteres permitidos para validar correctamente",
+  "address": "Calle Principal 123",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Create Owner - ERROR: Address muy corta (<5 caracteres)
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "ABC",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Create Owner - ERROR: Birthday faltante (default date)
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "Calle Principal 123"
+}
+
+### ? Create Owner - ERROR: Birthday en el futuro
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "Calle Principal 123",
+  "birthday": "2030-01-01T00:00:00"
+}
+
+### ? Create Owner - ERROR: Menor de 18 años
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez Jr",
+  "address": "Calle Principal 123",
+  "birthday": "2015-01-01T00:00:00"
+}
+
+### ? Create Owner - ERROR: Fecha muy antigua (>150 años)
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "Calle Principal 123",
+  "birthday": "1850-01-01T00:00:00"
+}
+
+### ? Create Owner - ERROR: Photo URL inválida
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez",
+  "address": "Calle Principal 123",
+  "photo": "not-a-valid-url",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### ? Update Owner - VÁLIDO
+PUT {{baseUrl}}/owners/{{ownerId}}
+Content-Type: application/json
+
+{
+  "name": "Juan Pérez Updated",
+  "address": "Avenida Secundaria 456, Bogotá",
+  "photo": "https://example.com/photos/juan-updated.jpg",
+  "birthday": "1985-05-15T00:00:00"
+}
+
+### Delete Owner
+DELETE {{baseUrl}}/owners/{{ownerId}}
+
+### Search Owners by Name
+GET {{baseUrl}}/owners/search/by-name?name=Juan
+Accept: application/json
+
+### Search Owners by Address
+GET {{baseUrl}}/owners/search/by-address?address=Bogotá
+Accept: application/json
+
+### Get Owners by Age Range
+GET {{baseUrl}}/owners/search/by-age?minAge=25&maxAge=45
+Accept: application/json
+
+#######################################
+# PROPERTIES ENDPOINTS
+#######################################
+
+### Get All Properties (with IdOwner, Name, Address, Price, and one image)
+GET {{baseUrl}}/properties
+Accept: application/json
+
+### Search Properties with Filters (name, address, price range)
+GET {{baseUrl}}/properties/search?name=Casa&address=Bogotá&minPrice=100000&maxPrice=500000
+Accept: application/json
+
+### Search Properties by Name only
+GET {{baseUrl}}/properties/search?name=Casa
+Accept: application/json
+
+### Search Properties by Address only
+GET {{baseUrl}}/properties/search?address=Calle
+Accept: application/json
+
+### Search Properties by Price Range only
+GET {{baseUrl}}/properties/search?minPrice=200000&maxPrice=800000
+Accept: application/json
+
+### Get Property by ID (detailed view with all images)
+GET {{baseUrl}}/properties/{{propertyId}}
+Accept: application/json
+
+### ? Create Property - VÁLIDO
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Name muy corto
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "A",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Address muy corta
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "123",
+  "price": 450000,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Price negativo
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": -100,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Price en 0
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 0,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: CodeInternal muy corto
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "AB",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: CodeInternal con caracteres inválidos
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP@2024#001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Year muy antiguo (<1800)
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP-1750-001",
+  "year": 1750,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: Year muy futuro (>5 años)
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP-2035-001",
+  "year": 2035,
+  "idOwner": "{{ownerId}}"
+}
+
+### ? Create Property - ERROR: IdOwner vacío
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa",
+  "address": "Carrera 7 #45-23, Santa Marta",
+  "price": 450000,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": ""
+}
+
+### ? Update Property - VÁLIDO
+PUT {{baseUrl}}/properties/{{propertyId}}
+Content-Type: application/json
+
+{
+  "name": "Casa en la Playa - Actualizada",
+  "address": "Carrera 7 #45-23, Santa Marta, Colombia",
+  "price": 480000,
+  "codeInternal": "PROP-2024-001",
+  "year": 2023,
+  "idOwner": "{{ownerId}}"
+}
+
+### Delete Property
+DELETE {{baseUrl}}/properties/{{propertyId}}
+
+### Get Properties by Owner
+GET {{baseUrl}}/properties/by-owner/{{ownerId}}
+Accept: application/json
+
+#######################################
+# PROPERTY IMAGES ENDPOINTS
+#######################################
+
+### Get All Images for a Property
+GET {{baseUrl}}/properties/{{propertyId}}/images
+Accept: application/json
+
+### ? Add Image to Property - VÁLIDO
+POST {{baseUrl}}/properties/{{propertyId}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "file": "https://example.com/images/property-front.jpg",
+  "enabled": true
+}
+
+### ? Add Image - ERROR: File no es URL válida
+POST {{baseUrl}}/properties/{{propertyId}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "file": "not-a-valid-url",
+  "enabled": true
+}
+
+### ? Add Image - ERROR: File vacío
+POST {{baseUrl}}/properties/{{propertyId}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "file": "",
+  "enabled": true
+}
+
+### ? Add Image - ERROR: IdProperty vacío
+POST {{baseUrl}}/properties/{{propertyId}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "",
+  "file": "https://example.com/images/property-front.jpg",
+  "enabled": true
+}
+
+### ? Add Image - ERROR: URL muy larga (>500 caracteres)
+POST {{baseUrl}}/properties/{{propertyId}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "file": "https://example.com/images/this-is-a-very-long-url-that-exceeds-the-maximum-allowed-length-of-500-characters-and-should-fail-validation-because-we-want-to-ensure-that-urls-are-reasonable-in-length-and-dont-cause-issues-with-storage-or-display-in-the-application-and-this-url-is-intentionally-made-very-long-to-test-the-validation-rules-that-we-have-implemented-in-the-dto-classes-and-make-sure-they-work-correctly-when-the-api-receives-invalid-data-from-clients-trying-to-create-or-update-property-images-in-our-system.jpg",
+  "enabled": true
+}
+
+### Get Image by ID
+GET {{baseUrl}}/properties/{{propertyId}}/images/{{imageId}}
+Accept: application/json
+
+### ? Update Image - VÁLIDO
+PUT {{baseUrl}}/properties/{{propertyId}}/images/{{imageId}}
+Content-Type: application/json
+
+{
+  "file": "https://example.com/images/property-updated.jpg",
+  "enabled": true
+}
+
+### Toggle Image (Enable/Disable)
+PATCH {{baseUrl}}/properties/{{propertyId}}/images/{{imageId}}/toggle?enabled=false
+
+### Delete Image
+DELETE {{baseUrl}}/properties/{{propertyId}}/images/{{imageId}}
+
+#######################################
+# PROPERTY TRACE ENDPOINTS
+#######################################
+
+### Get All Traces for a Property
+GET {{baseUrl}}/properties/{{propertyId}}/traces
+Accept: application/json
+
+### ? Create Property Trace - VÁLIDO
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta Principal",
+  "value": 450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: DateSale en el futuro lejano (>5 años)
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2035-01-15T00:00:00",
+  "name": "Venta Futura",
+  "value": 450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: DateSale muy antigua (>200 años)
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "1800-01-15T00:00:00",
+  "name": "Venta Antigua",
+  "value": 450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: DateSale fecha por defecto
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "name": "Venta Sin Fecha",
+  "value": 450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: Name muy corto
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "A",
+  "value": 450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: Value negativo
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta Negativa",
+  "value": -450000,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: Value en 0
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta en Cero",
+  "value": 0,
+  "tax": 45000
+}
+
+### ? Create Trace - ERROR: Tax negativo
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta con Tax Negativo",
+  "value": 450000,
+  "tax": -45000
+}
+
+### ? Create Trace - ERROR: Tax mayor que Value (>100%)
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta con Tax Alto",
+  "value": 450000,
+  "tax": 500000
+}
+
+### ? Create Trace - ERROR: Tax muy alto (>50% del Value)
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta con Tax 60%",
+  "value": 450000,
+  "tax": 270000
+}
+
+### ? Create Trace - VÁLIDO: Fecha futura cercana (venta planificada)
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{propertyId}}",
+  "dateSale": "2025-06-15T00:00:00",
+  "name": "Venta Planificada 2025",
+  "value": 500000,
+  "tax": 50000
+}
+
+### ? Create Trace - ERROR: IdProperty vacío
+POST {{baseUrl}}/properties/{{propertyId}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "",
+  "dateSale": "2024-01-15T00:00:00",
+  "name": "Venta Sin Property",
+  "value": 450000,
+  "tax": 45000
+}
+
+### Get Trace by ID
+GET {{baseUrl}}/properties/{{propertyId}}/traces/{{traceId}}
+Accept: application/json
+
+### ? Update Property Trace - VÁLIDO
+PUT {{baseUrl}}/properties/{{propertyId}}/traces/{{traceId}}
+Content-Type: application/json
+
+{
+  "dateSale": "2024-02-20T00:00:00",
+  "name": "Venta Principal Actualizada",
+  "value": 480000,
+  "tax": 48000
+}
+
+### Delete Property Trace
+DELETE {{baseUrl}}/properties/{{propertyId}}/traces/{{traceId}}
+
+#######################################
+# WORKFLOW COMPLETO DE PRUEBA
+#######################################
+
+### 1. Crear un Owner válido
+# @name createOwner
+POST {{baseUrl}}/owners
+Content-Type: application/json
+
+{
+  "name": "María González",
+  "address": "Avenida Libertador 789, Medellín",
+  "photo": "https://example.com/photos/maria.jpg",
+  "birthday": "1990-03-20T00:00:00"
+}
+
+### 2. Crear una Property para ese Owner
+# @name createProperty
+POST {{baseUrl}}/properties
+Content-Type: application/json
+
+{
+  "name": "Apartamento Moderno",
+  "address": "Carrera 50 #30-15, Medellín",
+  "price": 350000,
+  "codeInternal": "APT-MDL-2024-001",
+  "year": 2024,
+  "idOwner": "{{createOwner.response.body.$.idOwner}}"
+}
+
+### 3. Agregar imágenes a la Property
+POST {{baseUrl}}/properties/{{createProperty.response.body.$.idProperty}}/images
+Content-Type: application/json
+
+{
+  "idProperty": "{{createProperty.response.body.$.idProperty}}",
+  "file": "https://example.com/images/apartment-front.jpg",
+  "enabled": true
+}
+
+### 4. Crear un Property Trace
+POST {{baseUrl}}/properties/{{createProperty.response.body.$.idProperty}}/traces
+Content-Type: application/json
+
+{
+  "idProperty": "{{createProperty.response.body.$.idProperty}}",
+  "dateSale": "2024-01-10T00:00:00",
+  "name": "Primera Venta",
+  "value": 350000,
+  "tax": 35000
+}
+
+### 5. Obtener todos los detalles de la Property
+GET {{baseUrl}}/properties/{{createProperty.response.body.$.idProperty}}
+Accept: application/json
