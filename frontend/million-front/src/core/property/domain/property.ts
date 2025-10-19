@@ -1,0 +1,72 @@
+import type { BaseError } from '@/core/shared/domain/types';
+
+export interface Property {
+  id: string;
+  name: string;
+  address: string;
+  price: number;
+  codeInternal: string;
+  year: number;
+  ownerId: string;
+  ownerName?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PropertyImage {
+  id: string;
+  propertyId: string;
+  file: string;
+  enabled: boolean;
+}
+
+export interface PropertyTrace {
+  id: string;
+  dateSale: string;
+  name: string;
+  value: number;
+  tax: number;
+  propertyId: string;
+}
+
+export type CreatePropertyRequest = Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'ownerName'>;
+export type UpdatePropertyRequest = Partial<CreatePropertyRequest> & { id: string };
+
+export interface PropertyFilters {
+  name?: string;
+  address?: string;
+  minPrice?: number;
+  maxPrice?: number;
+  year?: number;
+  ownerId?: string;
+}
+
+export interface PropertyResponse {
+  data: Property | null;
+  error: BaseError | null;
+}
+
+export interface PropertiesResponse {
+  data: Property[] | null;
+  error: BaseError | null;
+}
+
+export interface PropertyImageResponse {
+  data: PropertyImage | null;
+  error: BaseError | null;
+}
+
+export interface PropertyImagesResponse {
+  data: PropertyImage[] | null;
+  error: BaseError | null;
+}
+
+export interface PropertyTraceResponse {
+  data: PropertyTrace | null;
+  error: BaseError | null;
+}
+
+export interface PropertyTracesResponse {
+  data: PropertyTrace[] | null;
+  error: BaseError | null;
+}

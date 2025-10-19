@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Million Properties - Frontend
 
-## Getting Started
+Sistema de gestión de propiedades inmobiliarias construido con **Next.js 15** y **arquitectura HYFORCE** (Hexagonal + Clean Architecture).
 
-First, run the development server:
+## 🏗️ Arquitectura
+
+El proyecto sigue la arquitectura **HYFORCE** con separación clara de responsabilidades:
+
+- **Core**: Lógica de negocio pura (domain, application, infrastructure)
+- **Presentation**: Componentes React y UI
+- **Infrastructure**: Clientes API y servicios externos
+
+📖 **Documentación completa**: [HYFORCE-ARCHITECTURE.md](./HYFORCE-ARCHITECTURE.md)
+
+## 🚀 Tecnologías
+
+- **Next.js 15** - Framework React con App Router
+- **TypeScript** - Tipado estático
+- **Tailwind CSS 4** - Estilos utility-first
+- **React Query (TanStack Query)** - Gestión de estado del servidor
+- **Axios** - Cliente HTTP para API REST
+- **Lucide React** - Iconos
+- **Arquitectura HYFORCE** - Hexagonal + Clean Architecture
+
+## 📦 Instalación
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+# Instalar dependencias
+pnpm install
+
+# Configurar variables de entorno
+cp .env.local.example .env.local
+
+# Iniciar servidor de desarrollo
 pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🎯 Características
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- ✅ Arquitectura hexagonal para mejor mantenibilidad
+- ✅ Separación clara de capas (Domain, Application, Infrastructure)
+- ✅ Tipado fuerte con TypeScript
+- ✅ Gestión de estado con React Query
+- ✅ Cliente Axios configurado con interceptors
+- ✅ Diseño responsive con Tailwind CSS
+- ✅ Componentes reutilizables
+- ✅ Integración con API REST del backend .NET
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🔧 Scripts
 
-## Learn More
+```bash
+pnpm dev      # Iniciar en modo desarrollo (puerto 3000)
+pnpm build    # Construir para producción
+pnpm start    # Iniciar servidor de producción
+pnpm lint     # Ejecutar linter
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📁 Estructura del Proyecto
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+src/
+├── core/                      # Lógica de negocio
+│   ├── property/             # Módulo de propiedades
+│   ├── owner/                # Módulo de propietarios
+│   └── shared/               # Código compartido
+├── infrastructure/            # Servicios externos
+│   └── api/                  # Cliente axios
+├── presentation/              # UI y componentes
+│   ├── components/
+│   └── hooks/
+└── shared/                    # Constantes globales
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🌐 Integración con Backend
 
-## Deploy on Vercel
+El frontend se conecta al backend .NET en `http://localhost:5000/api`
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Endpoints disponibles:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **GET** `/api/properties` - Listar propiedades
+- **POST** `/api/properties` - Crear propiedad
+- **PUT** `/api/properties/{id}` - Actualizar propiedad
+- **DELETE** `/api/properties/{id}` - Eliminar propiedad
+- **GET** `/api/owners` - Listar propietarios
+- **POST** `/api/owners` - Crear propietario
+
+## 🎨 Componentes Principales
+
+### Layout
+- **Header**: Navegación principal con menú responsive
+- **Footer**: Footer con links y redes sociales
+- **Providers**: Configuración de React Query
+
+### Pages
+- **Home**: Hero section con características destacadas
+- **Properties**: Listado y gestión de propiedades (próximamente)
+- **Owners**: Listado y gestión de propietarios (próximamente)
+
+## 🧪 Ejemplo de Uso
+
+```typescript
+import { PropertyService } from '@/core/property';
+import { axiosPropertyRepository } from '@/core/property';
+
+// Crear instancia del servicio
+const propertyService = PropertyService(axiosPropertyRepository);
+
+// Usar en React Query
+const { data, error } = useQuery({
+  queryKey: ['properties'],
+  queryFn: async () => {
+    const result = await propertyService.getAll();
+    if (result.error) throw result.error;
+    return result.data;
+  },
+});
+```
+
+## 📝 Variables de Entorno
+
+```env
+NEXT_PUBLIC_API_URL=http://localhost:5000/api
+```
+
+## 🔄 Flujo de Datos
+
+```
+Component → Hook → Service → Repository → Axios → API Backend
+    ↑                                         ↓
+    └────────────── Adapter ← DTO ← Response ←
+```
+
+## 📚 Recursos
+
+- [Next.js Documentation](https://nextjs.org/docs)
+- [TanStack Query](https://tanstack.com/query/latest)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [Axios](https://axios-http.com/docs/intro)
+
+## 📄 Licencia
+
+MIT

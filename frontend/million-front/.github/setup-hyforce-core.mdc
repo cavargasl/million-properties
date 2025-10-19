@@ -1,0 +1,480 @@
+---
+globs: core/**
+alwaysApply: false
+---
+
+# 🧱 HYFORCE - Setup for a new module in `core/`
+
+This document outlines the standard steps for building a new functional module or service in the `core/` layer, based on HYFORCE's clean architecture approach.
+
+## 📁 Module Structure
+
+```
+core/
+└── module-name/
+    ├── application/
+    │   └── moduleService.ts
+    ├── domain/
+    │   ├── module.ts
+    │   ├── moduleRepository.ts
+    ├── infrastructure/
+    │   ├── adapter/
+    │   │   └── moduleAdapter.ts
+    │   ├── moduleDto.ts
+    │   └── supabaseModuleRepository.ts
+```
+
+## 🪜 Steps to Create a New Module
+
+### 1. Define Domain Types and Contracts
+Location: `domain/module.ts`
+
+```ts
+import type { BaseError } from "@/core/shared/domain/types"
+
+export interface Entity {
+  id: string
+  name: string
+  createdAt: string
+  updatedAt: string
+}
+
+export type CreateEntityRequest = Omit<Entity, "id" | "createdAt" | "updatedAt">
+export type UpdateEntityRequest = Partial<CreateEntityRequest> & { id: string }
+
+export interface EntityResponse {
+  data: Entity | null
+  error: BaseError | null
+}
+export interface EntitiesResponse {
+  data: Entity[] | null
+  error: BaseError | null
+}
+```
+
+### 2. Define the Repository Contract
+Location: `domain/moduleRepository.ts`
+
+```ts
+import type { EntityResponse } from "./module"
+
+export interface EntityRepository {
+  getAll(): Promise<EntityResponse>
+  create(req: CreateEntityRequest): Promise<EntityResponse>
+  update(req: UpdateEntityRequest): Promise<EntityResponse>
+}
+```
+
+### 3. Create the Application Service
+Location: `application/moduleService.ts`
+
+```ts
+export const EntityService = (repository: EntityRepository): EntityRepository => ({
+  async getAll(filters) {
+    //optional extra validations of business logic 
+    return await repository.getAll(filters)
+  },
+  async getById(id) {
+    if (!id) {
+      return {
+        data: null,
+        error: {
+          message: "ID is required",
+          code: "ID_REQUIRED",
+        },
+      }
+    }
+    return await repository.getById(id)
+  },
+  async create(input) {
+    //optional extra validations of business logic 
+    if (!input.name) {
+      return {
+        data: null,
+        error: { message: "Name is required", code: "NAME_REQUIRED" },
+      }
+    }
+    return await repository.create(input)
+  },
+  async update(input) {
+    return await repository.update(input)
+  },
+  async delete(id) {
+    if (!id) {
+      return {
+        data: null,
+        error: {
+          message: "ID is required",
+          code: "ID_REQUIRED",
+        },
+      }
+    }
+    return await repository.delete(id)
+  },
+})
+```
+
+**💡 Key Benefits:**
+- **TypeScript infers return types** from the repository interface
+- **No need to import response types** in the service
+- **Cleaner and more readable code**
+- **Automatic type safety** without explicit typing
+
+
+### 4. Define DTO and Adapter
+Location:
+- DTO: `infrastructure/moduleDto.ts`
+- Adapter: `infrastructure/adapter/moduleAdapter.ts`
+
+```ts
+// moduleDto.ts
+import type { Tables, TablesInsert, TablesUpdate } from "@/supabase/database.types"
+
+export type EntityDto = Tables<"entities">
+export type CreateEntityDto = TablesInsert<"entities">
+export type UpdateEntityDto = TablesUpdate<"entities">
+```
+
+```ts
+// moduleAdapter.ts
+import type { Entity, CreateEntityRequest, UpdateEntityRequest } from "../../domain/module"
+import type { EntityDto, CreateEntityDto, UpdateEntityDto } from "../moduleDto"
+import { transformDtoObject } from "@/core/shared/utils/transformDtoObject"
+
+export const transformEntityFromDto = (dto: EntityDto | null): Entity | null => {
+  if (!dto) return null
+  const mapping: Record<keyof EntityDto, keyof Entity> = {
+    id: "id",
+    name: "name",
+    created_at: "createdAt",
+    updated_at: "updatedAt",
+  }
+  return transformDtoObject<EntityDto, Entity>(dto, mapping)
+    .nullOrEmptyToUndefined()
+    .result()
+}
+
+export const transformCreateEntityToDto = (entity: CreateEntityRequest): CreateEntityDto => {
+  const mapping: Record<keyof CreateEntityRequest, keyof CreateEntityDto> = {
+    email: "email",
+    entityId: "entity_id",
+    isPrimary: "is_primary",
+    name: "name",
+    phone: "phone",
+    position: "position",
+  }
+  return transformDtoObject<CreateEntityRequest, CreateEntityDto>(entity, mapping)
+    .removeUndefined()
+    .result()
+}
+
+export const transformUpdateEntityToDto = (entity: UpdateEntityRequest): UpdateEntityDto => {
+  const mapping: Record<keyof UpdateEntityRequest, keyof UpdateEntityDto> = {
+    id: "id", // Este se excluirá en la transformación
+    name: "name",
+    // Mapear otros campos según corresponda
+  }
+  
+  const { id, ...entityWithoutId } = entity
+  return transformDtoObject<Omit<UpdateEntityRequest, "id">, UpdateEntityDto>(entityWithoutId, mapping)
+    .removeUndefined()
+    .result()
+}
+```
+
+### 5. Implement Supabase Infrastructure
+Location: `infrastructure/supabaseModuleRepository.ts`
+
+```ts
+import { supabase } from "@/supabase/supabaseClient"
+import { 
+  transformEntityFromDto, 
+  transformCreateEntityToDto, 
+  transformUpdateEntityToDto 
+} from "./adapter/moduleAdapter"
+
+export const supabaseEntityRepository: EntityRepository = {
+  getAll: async () => {
+    const { data, error } = await supabase.from("entities").select("*")
+    return { data: data?.map(transformEntityFromDto) ?? null, error }
+  },
+  create: async input => {
+    const dto = transformCreateEntityToDto(input)
+    const { data, error } = await supabase.from("entities").insert(dto).select().single()
+    return { data: transformEntityFromDto(data), error }
+  },
+  update: async input => {
+    const dto = transformUpdateEntityToDto(input)
+    const { data, error } = await supabase.from("entities").update(dto).eq("id", input.id).select().single()
+    return { data: transformEntityFromDto(data), error }
+  },
+}
+```
+
+## ✅ Best Practices
+
+- Respect separation of concerns: `domain`, `application`, `infrastructure`
+- Use DTOs to decouple Supabase from the domain logic
+- Validate inputs with Zod if coming from forms or external inputs
+- Use adapters to transform DTOs to domain structures
+- Apply strict typing across all layers
+- **Use `export` in service definitions** to leverage TypeScript's type inference and avoid importing response types
+- **Use `const as const` instead of enums** for constants and status values, following the pattern from `core/projects/domain/project.ts`
+
+## ⚠️ CRITICAL: Adapter Rules
+
+**🚨 ADAPTERS MUST ONLY TRANSFORM ENTITY DATA, NEVER HANDLE ERRORS OR LOGIC**
+
+### ✅ Correct Adapter Usage:
+```ts
+// ✅ CORRECTO: Solo transforma datos de la entidad
+export const transformEntityFromDto = (dto: EntityDto): Entity => {
+  const mapping: Record<keyof EntityDto, keyof Entity> = {
+    id: "id",
+    name: "name",
+    created_at: "createdAt",
+  }
+  return transformDtoObject<EntityDto, Entity>(dto, mapping)
+    .nullOrEmptyToUndefined()
+    .result()
+}
+```
+
+### ❌ INCORRECTO: Adapter manejando errores o lógica
+```ts
+// ❌ INCORRECTO: NO manejar errores en adapters
+export const transformEntityFromDto = (dto: EntityDto): EntityResponse => {
+  if (dto.error) {
+    return { data: null, error: dto.error } // ❌ NO HACER ESTO
+  }
+  // ... transformación
+}
+```
+
+### 📋 Adapter Responsibilities:
+- ✅ **SÍ**: Transformar estructura de datos (camelCase ↔ snake_case)
+- ✅ **SÍ**: Mapear campos entre DTO y dominio
+- ✅ **SÍ**: Usar `transformDtoObject` utility
+- ❌ **NO**: Manejar errores o validaciones
+- ❌ **NO**: Lógica de negocio
+- ❌ **NO**: Respuestas con `{ data, error }`
+
+### 📍 Error Handling Location:
+- **Repository**: Maneja errores de Supabase y crea `BaseError`
+- **Service**: Aplica validaciones de negocio
+- **Adapter**: Solo transforma datos de entidades
+
+## 📌 Quick Checklist
+
+- [ ] Does the module have `application`, `domain`, `infrastructure`, `dto`, `adapter`?
+- [ ] Are contracts, services, and transformers properly separated?
+- [ ] Are all responses and errors strictly typed?
+- [ ] Does the adapter correctly map DTO to domain types?
+- [ ] Is the Supabase repository properly implemented?
+
+## ⚠️ CRITICAL: BaseError Usage Rules
+
+- **BaseError should ONLY be imported and used in the domain entity file** (`core/module-name/domain/module.ts`).
+- **Do NOT import or define BaseError in other files** such as the domain repository (`core/module-name/domain/moduleRepository.ts`), since the repository method responses are already typed using the response types defined in the domain (e.g., `EntityResponse`, `EntitiesResponse`), which already include the `error` field of type `BaseError | null`.
+- **In summary:**  
+  - **Where YES:** Only in the domain entity file.  
+  - **Where NO:** Not in domain repository, nor in application, nor in infrastructure, nor in adapters, nor in services.
+
+#### Correct Example
+
+```ts
+// core/module-name/domain/module.ts
+import type { BaseError } from "@/core/shared/domain/types"
+
+export interface Entity { ... }
+export interface EntityResponse {
+  data: Entity | null
+  error: BaseError | null
+}
+```
+
+```ts
+// core/module-name/domain/moduleRepository.ts
+// DO NOT import BaseError here
+import type { EntityResponse } from "./module"
+
+export interface EntityRepository {
+  getAll(): Promise<EntityResponse>
+  // ...
+}
+```
+
+## ⚠️ CRITICAL: DTO Rules
+
+- **DTOs MUST use Supabase auto-generated types** (`Tables`, `TablesInsert`, `TablesUpdate`) from `@/supabase/database.types`.
+- **Do NOT create manual interfaces for DTOs** unless explicitly requested by the user.
+- **Always use the exact table name** as defined in Supabase for the DTO types.
+
+#### Correct Example
+
+```ts
+// infrastructure/moduleDto.ts
+import type { Tables, TablesInsert, TablesUpdate } from "@/supabase/database.types"
+
+export type EntityDto = Tables<"entities">
+export type CreateEntityDto = TablesInsert<"entities">
+export type UpdateEntityDto = TablesUpdate<"entities">
+```
+
+#### Incorrect Example
+
+```ts
+// ❌ DO NOT create manual DTO interfaces
+export interface EntityDto {
+  id: string
+  name: string
+  created_at: string
+  // ...
+}
+```
+
+## ⚠️ CRITICAL: Infrastructure Repository Type Inference Rules
+
+- **Repository implementations in infrastructure MUST NOT import or define domain types** since they are inferred from the repository interface.
+- **TypeScript automatically infers the return types** from the repository contract defined in the domain.
+- **This ensures type safety and consistency** without manual type annotations.
+
+#### Correct Example
+
+```ts
+// infrastructure/supabaseModuleRepository.ts
+import { supabase } from "@/supabase/supabaseClient"
+import type { EntityRepository } from "../domain/moduleRepository"
+import { transformEntityFromDto, transformCreateEntityToDto } from "./adapter/moduleAdapter"
+
+export const supabaseEntityRepository: EntityRepository = {
+  async getAll() {
+    const { data, error } = await supabase.from("entities").select("*")
+    // TypeScript infers return type from EntityRepository interface
+    return { data: data?.map(transformEntityFromDto) ?? null, error }
+  },
+  
+  async create(input) {
+    const dto = transformCreateEntityToDto(input)
+    const { data, error } = await supabase.from("entities").insert(dto).select().single()
+    // Return type is automatically inferred as EntityResponse
+    return { data: transformEntityFromDto(data), error }
+  }
+}
+```
+
+#### Incorrect Example
+
+```ts
+// ❌ DO NOT import domain types in infrastructure repositories
+import type { Entity, EntityResponse, CreateEntityRequest } from "../domain/module"
+
+export const supabaseEntityRepository: EntityRepository = {
+  async getAll(): Promise<EntityResponse> { // ❌ Manual type annotation
+    // ...
+  },
+  
+  async create(input: CreateEntityRequest): Promise<EntityResponse> { // ❌ Manual type annotation
+    // ...
+  }
+}
+```
+
+### 📋 Benefits of Type Inference:
+- **Automatic type safety**: TypeScript ensures return types match the repository interface
+- **Reduced imports**: No need to import domain types in infrastructure
+- **Consistency**: Repository implementation automatically follows the contract
+- **Maintainability**: Changes to domain types automatically propagate to infrastructure
+
+## ⚠️ CRITICAL: Array Transformation and Null Filtering Rules
+
+- **When transforming arrays in infrastructure repositories, ALWAYS filter out null values** after using adapters.
+- **Use the type guard pattern** `.filter((item): item is NonNullable<typeof item> => item !== null)` to maintain type safety.
+- **This ensures arrays contain only valid entities** and prevents runtime errors.
+
+#### Correct Example
+
+```ts
+// infrastructure/supabaseModuleRepository.ts
+export const supabaseEntityRepository: EntityRepository = {
+  async getAll() {
+    const { data, error } = await supabase.from("entities").select("*")
+    
+    if (error) {
+      return { data: null, error: { message: error.message, code: error.code } }
+    }
+
+    // Transform data using adapter and filter out null values
+    const transformedData = data
+      ?.map(transformEntityFromDto)
+      .filter((item): item is NonNullable<typeof item> => item !== null) || []
+
+    return { data: transformedData, error: null }
+  }
+}
+```
+
+#### Incorrect Example
+
+```ts
+// ❌ DO NOT return arrays with null values
+const transformedData = data?.map(transformEntityFromDto) || null
+// This can result in (Entity | null)[] which is not compatible with Entity[]
+```
+
+### 📋 Why This Pattern is Critical:
+
+#### **Type Safety:**
+- **Prevents runtime errors**: Eliminates null values that could cause crashes
+- **Maintains array type integrity**: Ensures arrays contain only valid entities
+- **TypeScript compatibility**: Satisfies strict typing requirements
+
+#### **Adapter Responsibility:**
+- **Adapters can return null**: When DTO data is invalid or missing
+- **Repository must handle nulls**: Filter them out before returning arrays
+- **Clean separation**: Adapters transform, repositories filter
+
+#### **Performance Benefits:**
+- **Early filtering**: Removes invalid data before processing
+- **Memory efficiency**: Reduces array size by eliminating nulls
+- **Predictable behavior**: Arrays always contain valid entities
+
+### 📋 Common Use Cases:
+
+#### **Single Entity (No filtering needed):**
+```ts
+async getById(id: string) {
+  const { data, error } = await supabase.from("entities").select("*").eq("id", id).single()
+  return { data: transformEntityFromDto(data), error }
+}
+```
+
+#### **Multiple Entities (Filtering required):**
+```ts
+async getAll() {
+  const { data, error } = await supabase.from("entities").select("*")
+  const transformedData = data
+    ?.map(transformEntityFromDto)
+    .filter((item): item is NonNullable<typeof item> => item !== null) || []
+  return { data: transformedData, error }
+}
+```
+
+#### **Relations with Nested Arrays:**
+```ts
+async getWithRelations() {
+  const { data, error } = await supabase
+    .from("entities")
+    .select("*, contacts:contacts(*), documents:documents(*)")
+  
+  const transformedData = data
+    ?.map(transformEntityWithRelationsFromDto)
+    .filter((item): item is NonNullable<typeof item> => item !== null) || []
+    
+  return { data: transformedData, error }
+}
+```
+
+- [ ] Are all responses and errors strictly typed?
+- [ ] Does the adapter correctly map DTO to domain types?
+- [ ] Is the Supabase repository properly implemented?
