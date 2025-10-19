@@ -1,4 +1,4 @@
-import { apiClient, transformError } from '@/infrastructure/api/apiClient';
+import { apiClient, transformError } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/shared/constants/api';
 import type { PropertyRepository } from '../domain/propertyRepository';
 import {
