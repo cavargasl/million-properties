@@ -55,6 +55,52 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Search properties with filters and pagination
+        /// </summary>
+        /// <param name="name">Property name (partial match, case-insensitive)</param>
+        /// <param name="address">Property address (partial match, case-insensitive)</param>
+        /// <param name="minPrice">Minimum price</param>
+        /// <param name="maxPrice">Maximum price</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of properties matching the filters</returns>
+        [HttpGet("search/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyDto>>> SearchPaginated(
+            [FromQuery] string? name,
+            [FromQuery] string? address,
+            [FromQuery] decimal? minPrice,
+            [FromQuery] decimal? maxPrice,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var filterDto = new PropertyFilterDto
+                {
+                    Name = name,
+                    Address = address,
+                    MinPrice = minPrice,
+                    MaxPrice = maxPrice
+                };
+
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _propertyService.SearchPropertiesPaginatedAsync(filterDto, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching properties with pagination");
+                return StatusCode(500, "An error occurred while searching properties");
+            }
+        }
+
+        /// <summary>
         /// Get all properties
         /// Returns: IdOwner, Name, Address, Price, and one image for each property
         /// </summary>
@@ -233,6 +279,38 @@ namespace Million.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting properties for owner {OwnerId}", ownerId);
+                return StatusCode(500, new { error = "An error occurred while retrieving properties" });
+            }
+        }
+
+        /// <summary>
+        /// Get all properties for a specific owner with pagination
+        /// </summary>
+        /// <param name="ownerId">Owner ID</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of properties owned by the specified owner</returns>
+        [HttpGet("by-owner/{ownerId}/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyDto>>> GetByOwnerPaginated(
+            string ownerId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _propertyService.GetPropertiesByOwnerPaginatedAsync(ownerId, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting properties for owner {OwnerId} with pagination", ownerId);
                 return StatusCode(500, new { error = "An error occurred while retrieving properties" });
             }
         }

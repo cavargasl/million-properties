@@ -40,6 +40,38 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Get all images for a property with pagination
+        /// </summary>
+        /// <param name="propertyId">Property ID</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of images for the property</returns>
+        [HttpGet("paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyImageDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyImageDto>>> GetByPropertyIdPaginated(
+            string propertyId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _imageService.GetImagesByPropertyIdPaginatedAsync(propertyId, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting images for property {PropertyId} with pagination", propertyId);
+                return StatusCode(500, "An error occurred while retrieving images");
+            }
+        }
+
+        /// <summary>
         /// Add image to property
         /// </summary>
         /// <param name="propertyId">Property ID</param>

@@ -42,6 +42,36 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Get all owners with pagination
+        /// </summary>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of all owners</returns>
+        [HttpGet("paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<OwnerDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<OwnerDto>>> GetAllPaginated(
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _ownerService.GetAllOwnersPaginatedAsync(paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting all owners with pagination");
+                return StatusCode(500, "An error occurred while retrieving owners");
+            }
+        }
+
+        /// <summary>
         /// Get owner by ID
         /// </summary>
         /// <param name="id">Owner ID</param>
@@ -207,6 +237,43 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Search owners by name with pagination
+        /// </summary>
+        /// <param name="name">Name to search for (partial match, case-insensitive)</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of matching owners</returns>
+        [HttpGet("search/by-name/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<OwnerDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<OwnerDto>>> SearchByNamePaginated(
+            [FromQuery] string name,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    return BadRequest(new { error = "Name parameter is required" });
+                }
+
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _ownerService.SearchByNamePaginatedAsync(name, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching owners by name with pagination");
+                return StatusCode(500, new { error = "An error occurred while searching owners" });
+            }
+        }
+
+        /// <summary>
         /// Search owners by address
         /// </summary>
         /// <param name="address">Address to search for (partial match, case-insensitive)</param>
@@ -228,6 +295,43 @@ namespace Million.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error searching owners by address");
+                return StatusCode(500, new { error = "An error occurred while searching owners" });
+            }
+        }
+
+        /// <summary>
+        /// Search owners by address with pagination
+        /// </summary>
+        /// <param name="address">Address to search for (partial match, case-insensitive)</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of matching owners</returns>
+        [HttpGet("search/by-address/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<OwnerDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<OwnerDto>>> SearchByAddressPaginated(
+            [FromQuery] string address,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                if (string.IsNullOrWhiteSpace(address))
+                {
+                    return BadRequest(new { error = "Address parameter is required" });
+                }
+
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _ownerService.SearchByAddressPaginatedAsync(address, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error searching owners by address with pagination");
                 return StatusCode(500, new { error = "An error occurred while searching owners" });
             }
         }
@@ -255,6 +359,45 @@ namespace Million.API.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error getting owners by age range");
+                return StatusCode(500, new { error = "An error occurred while retrieving owners" });
+            }
+        }
+
+        /// <summary>
+        /// Get owners by age range with pagination
+        /// </summary>
+        /// <param name="minAge">Minimum age</param>
+        /// <param name="maxAge">Maximum age</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of owners in the age range</returns>
+        [HttpGet("search/by-age/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<OwnerDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<OwnerDto>>> GetByAgeRangePaginated(
+            [FromQuery] int minAge,
+            [FromQuery] int maxAge,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                if (minAge < 0 || maxAge < 0 || minAge > maxAge)
+                {
+                    return BadRequest(new { error = "Invalid age range" });
+                }
+
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _ownerService.GetByAgeRangePaginatedAsync(minAge, maxAge, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting owners by age range with pagination");
                 return StatusCode(500, new { error = "An error occurred while retrieving owners" });
             }
         }

@@ -53,6 +53,47 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Search properties using filters with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyDto>> SearchPropertiesPaginatedAsync(
+            PropertyFilterDto filterDto, 
+            PaginationRequestDto paginationDto)
+        {
+            var (properties, totalCount) = await _propertyRepository.SearchPropertiesPaginatedAsync(
+                name: filterDto.Name,
+                address: filterDto.Address,
+                minPrice: filterDto.MinPrice,
+                maxPrice: filterDto.MaxPrice,
+                pageNumber: paginationDto.PageNumber,
+                pageSize: paginationDto.PageSize
+            );
+
+            var propertyDtos = new List<PropertyDto>();
+            foreach (var property in properties)
+            {
+                var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
+                var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
+
+                propertyDtos.Add(new PropertyDto
+                {
+                    IdProperty = property.IdProperty,
+                    IdOwner = property.IdOwner,
+                    Name = property.Name,
+                    Address = property.Address,
+                    Price = property.Price,
+                    Image = firstImage
+                });
+            }
+
+            return new PaginatedResponseDto<PropertyDto>(
+                propertyDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get property by ID with full details
         /// </summary>
         public async Task<PropertyDetailDto?> GetPropertyByIdAsync(string id)
@@ -176,6 +217,44 @@ namespace Million.API.Services
             }
 
             return propertyDtos;
+        }
+
+        /// <summary>
+        /// Get properties by owner with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyDto>> GetPropertiesByOwnerPaginatedAsync(
+            string ownerId, 
+            PaginationRequestDto paginationDto)
+        {
+            var (properties, totalCount) = await _propertyRepository.GetByOwnerIdPaginatedAsync(
+                ownerId,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var propertyDtos = new List<PropertyDto>();
+            foreach (var property in properties)
+            {
+                var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
+                var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
+
+                propertyDtos.Add(new PropertyDto
+                {
+                    IdProperty = property.IdProperty,
+                    IdOwner = property.IdOwner,
+                    Name = property.Name,
+                    Address = property.Address,
+                    Price = property.Price,
+                    Image = firstImage
+                });
+            }
+
+            return new PaginatedResponseDto<PropertyDto>(
+                propertyDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
         }
     }
 }

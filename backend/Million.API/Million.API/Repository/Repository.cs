@@ -43,5 +43,18 @@ namespace ASP.MongoDb.API.Repository
             var objectId = new ObjectId(id);
             await _collection.DeleteOneAsync(Builders<T>.Filter.Eq("_id", objectId));
         }
+
+        public async Task<(IEnumerable<T> Items, long TotalCount)> GetPaginatedAsync(int pageNumber, int pageSize)
+        {
+            var filter = Builders<T>.Filter.Empty;
+            var totalCount = await _collection.CountDocumentsAsync(filter);
+            
+            var items = await _collection.Find(filter)
+                .Skip((pageNumber - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
     }
 }

@@ -26,6 +26,26 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Get all owners with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<OwnerDto>> GetAllOwnersPaginatedAsync(PaginationRequestDto paginationDto)
+        {
+            var (owners, totalCount) = await _ownerRepository.GetPaginatedAsync(
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var ownerDtos = owners.Select(MapToDto);
+
+            return new PaginatedResponseDto<OwnerDto>(
+                ownerDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get owner by ID
         /// </summary>
         public async Task<OwnerDto?> GetOwnerByIdAsync(string id)
@@ -102,6 +122,29 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Search owners by name with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<OwnerDto>> SearchByNamePaginatedAsync(
+            string name, 
+            PaginationRequestDto paginationDto)
+        {
+            var (owners, totalCount) = await _ownerRepository.FindByNamePaginatedAsync(
+                name,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var ownerDtos = owners.Select(MapToDto);
+
+            return new PaginatedResponseDto<OwnerDto>(
+                ownerDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Search owners by address
         /// </summary>
         public async Task<IEnumerable<OwnerDto>> SearchByAddressAsync(string address)
@@ -111,12 +154,60 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Search owners by address with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<OwnerDto>> SearchByAddressPaginatedAsync(
+            string address, 
+            PaginationRequestDto paginationDto)
+        {
+            var (owners, totalCount) = await _ownerRepository.FindByAddressPaginatedAsync(
+                address,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var ownerDtos = owners.Select(MapToDto);
+
+            return new PaginatedResponseDto<OwnerDto>(
+                ownerDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get owners by age range
         /// </summary>
         public async Task<IEnumerable<OwnerDto>> GetByAgeRangeAsync(int minAge, int maxAge)
         {
             var owners = await _ownerRepository.FindByAgeRangeAsync(minAge, maxAge);
             return owners.Select(MapToDto);
+        }
+
+        /// <summary>
+        /// Get owners by age range with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<OwnerDto>> GetByAgeRangePaginatedAsync(
+            int minAge, 
+            int maxAge, 
+            PaginationRequestDto paginationDto)
+        {
+            var (owners, totalCount) = await _ownerRepository.FindByAgeRangePaginatedAsync(
+                minAge,
+                maxAge,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var ownerDtos = owners.Select(MapToDto);
+
+            return new PaginatedResponseDto<OwnerDto>(
+                ownerDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
         }
 
         /// <summary>

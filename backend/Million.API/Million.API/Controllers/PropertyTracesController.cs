@@ -40,6 +40,38 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Get all traces for a property with pagination
+        /// </summary>
+        /// <param name="propertyId">Property ID</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of traces for the property</returns>
+        [HttpGet("paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyTraceDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyTraceDto>>> GetByPropertyIdPaginated(
+            string propertyId,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _traceService.GetTracesByPropertyIdPaginatedAsync(propertyId, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting traces for property {PropertyId} with pagination", propertyId);
+                return StatusCode(500, new { error = "An error occurred while retrieving traces" });
+            }
+        }
+
+        /// <summary>
         /// Get trace by ID
         /// </summary>
         /// <param name="propertyId">Property ID</param>
@@ -201,6 +233,74 @@ namespace Million.API.Controllers
             {
                 _logger.LogError(ex, "Error deleting trace {TraceId} for property {PropertyId}", id, propertyId);
                 return StatusCode(500, new { error = "An error occurred while deleting the trace" });
+            }
+        }
+
+        /// <summary>
+        /// Get traces by date range
+        /// </summary>
+        /// <param name="startDate">Start date</param>
+        /// <param name="endDate">End date</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of traces in the date range</returns>
+        [HttpGet("~/api/traces/by-date/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyTraceDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyTraceDto>>> GetByDateRangePaginated(
+            [FromQuery] DateTime startDate,
+            [FromQuery] DateTime endDate,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _traceService.GetTracesByDateRangePaginatedAsync(startDate, endDate, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting traces by date range with pagination");
+                return StatusCode(500, new { error = "An error occurred while retrieving traces" });
+            }
+        }
+
+        /// <summary>
+        /// Get traces by value range
+        /// </summary>
+        /// <param name="minValue">Minimum value</param>
+        /// <param name="maxValue">Maximum value</param>
+        /// <param name="pageNumber">Page number (starting from 1, default: 1)</param>
+        /// <param name="pageSize">Items per page (max 100, default: 10)</param>
+        /// <returns>Paginated list of traces in the value range</returns>
+        [HttpGet("~/api/traces/by-value/paginated")]
+        [ProducesResponseType(typeof(PaginatedResponseDto<PropertyTraceDto>), StatusCodes.Status200OK)]
+        public async Task<ActionResult<PaginatedResponseDto<PropertyTraceDto>>> GetByValueRangePaginated(
+            [FromQuery] decimal minValue,
+            [FromQuery] decimal maxValue,
+            [FromQuery] int pageNumber = 1,
+            [FromQuery] int pageSize = 10)
+        {
+            try
+            {
+                var paginationDto = new PaginationRequestDto
+                {
+                    PageNumber = pageNumber,
+                    PageSize = pageSize
+                };
+
+                var result = await _traceService.GetTracesByValueRangePaginatedAsync(minValue, maxValue, paginationDto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error getting traces by value range with pagination");
+                return StatusCode(500, new { error = "An error occurred while retrieving traces" });
             }
         }
     }

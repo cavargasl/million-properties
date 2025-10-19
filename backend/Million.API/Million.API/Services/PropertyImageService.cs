@@ -27,6 +27,29 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Get all images for a property with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyImageDto>> GetImagesByPropertyIdPaginatedAsync(
+            string propertyId, 
+            PaginationRequestDto paginationDto)
+        {
+            var (images, totalCount) = await _imageRepository.GetByPropertyIdPaginatedAsync(
+                propertyId,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var imageDtos = images.Select(MapToDto);
+
+            return new PaginatedResponseDto<PropertyImageDto>(
+                imageDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get image by ID
         /// </summary>
         public async Task<PropertyImageDto?> GetImageByIdAsync(string id)

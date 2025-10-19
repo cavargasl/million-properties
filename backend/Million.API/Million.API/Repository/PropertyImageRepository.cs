@@ -18,6 +18,22 @@ namespace Million.API.Repository
             return await _collection.Find(filter).ToListAsync();
         }
 
+        public async Task<(IEnumerable<PropertyImage> Items, long TotalCount)> GetByPropertyIdPaginatedAsync(
+            string propertyId,
+            int pageNumber,
+            int pageSize)
+        {
+            var filter = Builders<PropertyImage>.Filter.Eq(x => x.IdProperty, propertyId);
+            var totalCount = await _collection.CountDocumentsAsync(filter);
+
+            var items = await _collection.Find(filter)
+                .Skip((pageNumber - 1) * pageSize)
+                .Limit(pageSize)
+                .ToListAsync();
+
+            return (items, totalCount);
+        }
+
         public async Task<IEnumerable<PropertyImage>> GetEnabledByPropertyIdAsync(string propertyId)
         {
             var filter = Builders<PropertyImage>.Filter.And(

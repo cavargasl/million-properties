@@ -27,6 +27,29 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Get all traces for a property with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyTraceDto>> GetTracesByPropertyIdPaginatedAsync(
+            string propertyId, 
+            PaginationRequestDto paginationDto)
+        {
+            var (traces, totalCount) = await _traceRepository.GetByPropertyIdPaginatedAsync(
+                propertyId,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var traceDtos = traces.Select(MapToDto);
+
+            return new PaginatedResponseDto<PropertyTraceDto>(
+                traceDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get trace by ID
         /// </summary>
         public async Task<PropertyTraceDto?> GetTraceByIdAsync(string id)
@@ -99,12 +122,62 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Get traces by date range with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyTraceDto>> GetTracesByDateRangePaginatedAsync(
+            DateTime startDate, 
+            DateTime endDate, 
+            PaginationRequestDto paginationDto)
+        {
+            var (traces, totalCount) = await _traceRepository.GetByDateRangePaginatedAsync(
+                startDate,
+                endDate,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var traceDtos = traces.Select(MapToDto);
+
+            return new PaginatedResponseDto<PropertyTraceDto>(
+                traceDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+        }
+
+        /// <summary>
         /// Get traces by value range
         /// </summary>
         public async Task<IEnumerable<PropertyTraceDto>> GetTracesByValueRangeAsync(decimal minValue, decimal maxValue)
         {
             var traces = await _traceRepository.GetByValueRangeAsync(minValue, maxValue);
             return traces.Select(MapToDto);
+        }
+
+        /// <summary>
+        /// Get traces by value range with pagination
+        /// </summary>
+        public async Task<PaginatedResponseDto<PropertyTraceDto>> GetTracesByValueRangePaginatedAsync(
+            decimal minValue, 
+            decimal maxValue, 
+            PaginationRequestDto paginationDto)
+        {
+            var (traces, totalCount) = await _traceRepository.GetByValueRangePaginatedAsync(
+                minValue,
+                maxValue,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
+
+            var traceDtos = traces.Select(MapToDto);
+
+            return new PaginatedResponseDto<PropertyTraceDto>(
+                traceDtos,
+                totalCount,
+                paginationDto.PageNumber,
+                paginationDto.PageSize
+            );
         }
 
         private static PropertyTraceDto MapToDto(PropertyTrace trace)
