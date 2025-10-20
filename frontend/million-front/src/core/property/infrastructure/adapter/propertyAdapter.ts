@@ -22,20 +22,18 @@ import { transformDtoObject } from '@/core/shared/utils/transformDtoObject';
 export const transformPropertyFromDto = (dto: PropertyDto | null): Property | null => {
   if (!dto) return null;
 
-  const mapping: Record<keyof PropertyDto, keyof Property> = {
-    id: 'id',
-    name: 'name',
-    address: 'address',
-    price: 'price',
-    codeInternal: 'codeInternal',
-    year: 'year',
-    ownerId: 'ownerId',
-    ownerName: 'ownerName',
+  return {
+    id: dto.idProperty,
+    name: dto.name,
+    address: dto.address,
+    price: dto.price,
+    ownerId: dto.idOwner,
+    ownerName: dto.ownerName,
+    image: dto.image,
+    // Campos que vienen en otras llamadas API (detail view)
+    codeInternal: '',
+    year: 0,
   };
-
-  return transformDtoObject<PropertyDto, Property>(dto, mapping)
-    .nullOrEmptyToUndefined()
-    .result();
 };
 
 /**

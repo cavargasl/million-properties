@@ -1,13 +1,12 @@
 // DTOs que coinciden con la API del backend .NET
 export interface PropertyDto {
-  id: string;
+  idProperty: string;
+  idOwner: string;
   name: string;
   address: string;
   price: number;
-  codeInternal: string;
-  year: number;
-  ownerId: string;
-  ownerName?: string;
+  image?: string; // URL de la primera imagen habilitada
+  ownerName?: string; // Nombre del propietario
 }
 
 export interface CreatePropertyDto {

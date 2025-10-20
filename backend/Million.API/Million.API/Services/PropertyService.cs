@@ -8,13 +8,16 @@ namespace Million.API.Services
     {
         private readonly PropertyRepository _propertyRepository;
         private readonly PropertyImageRepository _imageRepository;
+        private readonly OwnerRepository _ownerRepository;
 
         public PropertyService(
             PropertyRepository propertyRepository,
-            PropertyImageRepository imageRepository)
+            PropertyImageRepository imageRepository,
+            OwnerRepository ownerRepository)
         {
             _propertyRepository = propertyRepository;
             _imageRepository = imageRepository;
+            _ownerRepository = ownerRepository;
         }
 
         /// <summary>
@@ -30,13 +33,16 @@ namespace Million.API.Services
                 maxPrice: filterDto.MaxPrice
             );
 
-            // ✅ Entity → DTO con una sola imagen
+            // ✅ Entity → DTO con una sola imagen y nombre del propietario
             var propertyDtos = new List<PropertyDto>();
             foreach (var property in properties)
             {
                 // Obtener solo la primera imagen habilitada
                 var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
                 var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
+
+                // Obtener información del propietario
+                var owner = await _ownerRepository.GetByIdAsync(property.IdOwner);
 
                 propertyDtos.Add(new PropertyDto
                 {
@@ -45,7 +51,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
-                    Image = firstImage // ✅ Solo una imagen como requiere el DTO
+                    Image = firstImage, // ✅ Solo una imagen como requiere el DTO
+                    OwnerName = owner?.Name // ✅ Nombre del propietario
                 });
             }
 
@@ -74,6 +81,9 @@ namespace Million.API.Services
                 var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
                 var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
 
+                // Obtener información del propietario
+                var owner = await _ownerRepository.GetByIdAsync(property.IdOwner);
+
                 propertyDtos.Add(new PropertyDto
                 {
                     IdProperty = property.IdProperty,
@@ -81,7 +91,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
-                    Image = firstImage
+                    Image = firstImage,
+                    OwnerName = owner?.Name
                 });
             }
 
@@ -148,6 +159,9 @@ namespace Million.API.Services
 
             await _propertyRepository.CreateAsync(property);
 
+            // Obtener información del propietario
+            var owner = await _ownerRepository.GetByIdAsync(property.IdOwner);
+
             // ✅ Entity → DTO
             return new PropertyDto
             {
@@ -156,7 +170,8 @@ namespace Million.API.Services
                 Name = property.Name,
                 Address = property.Address,
                 Price = property.Price,
-                Image = null // Nueva propiedad sin imagen
+                Image = null, // Nueva propiedad sin imagen
+                OwnerName = owner?.Name
             };
         }
 
@@ -205,6 +220,9 @@ namespace Million.API.Services
                 var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
                 var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
 
+                // Obtener información del propietario
+                var owner = await _ownerRepository.GetByIdAsync(property.IdOwner);
+
                 propertyDtos.Add(new PropertyDto
                 {
                     IdProperty = property.IdProperty,
@@ -212,7 +230,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
-                    Image = firstImage
+                    Image = firstImage,
+                    OwnerName = owner?.Name
                 });
             }
 
@@ -238,6 +257,9 @@ namespace Million.API.Services
                 var images = await _imageRepository.GetByPropertyIdAsync(property.IdProperty);
                 var firstImage = images.FirstOrDefault(img => img.Enabled)?.File;
 
+                // Obtener información del propietario
+                var owner = await _ownerRepository.GetByIdAsync(property.IdOwner);
+
                 propertyDtos.Add(new PropertyDto
                 {
                     IdProperty = property.IdProperty,
@@ -245,7 +267,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
-                    Image = firstImage
+                    Image = firstImage,
+                    OwnerName = owner?.Name
                 });
             }
 

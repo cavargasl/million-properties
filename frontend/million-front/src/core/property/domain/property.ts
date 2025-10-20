@@ -9,6 +9,7 @@ export interface Property {
   year: number;
   ownerId: string;
   ownerName?: string;
+  image?: string; // URL de la primera imagen de la propiedad
   createdAt?: string;
   updatedAt?: string;
 }
@@ -29,7 +30,7 @@ export interface PropertyTrace {
   propertyId: string;
 }
 
-export type CreatePropertyRequest = Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'ownerName'>;
+export type CreatePropertyRequest = Omit<Property, 'id' | 'createdAt' | 'updatedAt' | 'ownerName' | 'image'>;
 export type UpdatePropertyRequest = Partial<CreatePropertyRequest> & { id: string };
 
 export interface PropertyFilters {
