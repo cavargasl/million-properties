@@ -54,8 +54,20 @@ export const axiosPropertyRepository: PropertyRepository = {
 
   async getById(id) {
     try {
-      const { data } = await apiClient.get<PropertyDto>(`${API_ENDPOINTS.PROPERTIES}/${id}`);
-      return { data: transformPropertyFromDto(data), error: null };
+      const { data } = await apiClient.get<any>(`${API_ENDPOINTS.PROPERTIES}/${id}`);
+      // The backend returns PropertyDetailDto which has more fields
+      const property = {
+        id: data.idProperty,
+        name: data.name,
+        address: data.address,
+        price: data.price,
+        codeInternal: data.codeInternal || '',
+        year: data.year || 0,
+        ownerId: data.idOwner,
+        ownerName: data.owner?.name,
+        image: data.images && data.images.length > 0 ? data.images[0].file : undefined,
+      };
+      return { data: property, error: null };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }

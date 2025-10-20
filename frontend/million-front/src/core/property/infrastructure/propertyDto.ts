@@ -5,6 +5,8 @@ export interface PropertyDto {
   name: string;
   address: string;
   price: number;
+  codeInternal: string;
+  year: number;
   image?: string; // URL de la primera imagen habilitada
   ownerName?: string; // Nombre del propietario
 }
@@ -15,7 +17,7 @@ export interface CreatePropertyDto {
   price: number;
   codeInternal: string;
   year: number;
-  ownerId: string;
+  IdOwner: string;
 }
 
 export interface UpdatePropertyDto {
@@ -25,14 +27,25 @@ export interface UpdatePropertyDto {
   price?: number;
   codeInternal?: string;
   year?: number;
-  ownerId?: string;
+  IdOwner?: string;
 }
 
 export interface PropertyImageDto {
-  id: string;
-  propertyId: string;
+  idPropertyImage: string;
+  idProperty: string;
   file: string;
   enabled: boolean;
+}
+
+export interface PropertyDetailDto {
+  idProperty: string;
+  name: string;
+  address: string;
+  price: number;
+  codeInternal: string;
+  year: number;
+  IdOwner: string;
+  images: PropertyImageDto[];
 }
 
 export interface PropertyTraceDto {

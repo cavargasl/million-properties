@@ -27,12 +27,11 @@ export const transformPropertyFromDto = (dto: PropertyDto | null): Property | nu
     name: dto.name,
     address: dto.address,
     price: dto.price,
+    codeInternal: dto.codeInternal,
+    year: dto.year,
     ownerId: dto.idOwner,
     ownerName: dto.ownerName,
     image: dto.image,
-    // Campos que vienen en otras llamadas API (detail view)
-    codeInternal: '',
-    year: 0,
   };
 };
 
@@ -48,7 +47,7 @@ export const transformCreatePropertyToDto = (
     price: 'price',
     codeInternal: 'codeInternal',
     year: 'year',
-    ownerId: 'ownerId',
+    ownerId: 'IdOwner',
   };
 
   return transformDtoObject<CreatePropertyRequest, CreatePropertyDto>(property, mapping)
@@ -73,7 +72,7 @@ export const transformUpdatePropertyToDto = (
     price: 'price',
     codeInternal: 'codeInternal',
     year: 'year',
-    ownerId: 'ownerId',
+    ownerId: 'IdOwner',
   };
 
   const dto = transformDtoObject<
@@ -94,16 +93,12 @@ export const transformPropertyImageFromDto = (
 ): PropertyImage | null => {
   if (!dto) return null;
 
-  const mapping: Record<keyof PropertyImageDto, keyof PropertyImage> = {
-    id: 'id',
-    propertyId: 'propertyId',
-    file: 'file',
-    enabled: 'enabled',
+  return {
+    id: dto.idPropertyImage,
+    propertyId: dto.idProperty,
+    file: dto.file,
+    enabled: dto.enabled,
   };
-
-  return transformDtoObject<PropertyImageDto, PropertyImage>(dto, mapping)
-    .nullOrEmptyToUndefined()
-    .result();
 };
 
 /**

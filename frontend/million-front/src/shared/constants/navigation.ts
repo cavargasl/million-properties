@@ -8,6 +8,10 @@ export const NAVIGATION_LINKS = [
     href: '/properties',
   },
   {
+    name: 'Gestión',
+    href: '/properties/manage',
+  },
+  {
     name: 'Propietarios',
     href: '/owners',
   },
