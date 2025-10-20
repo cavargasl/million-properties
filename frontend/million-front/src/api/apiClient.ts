@@ -35,13 +35,50 @@ apiClient.interceptors.response.use(
 
 /**
  * Transforms axios errors to BaseError format
+ * Extracts the most relevant error message from different error formats
  */
 export const transformError = (error: unknown): BaseError => {
   if (axios.isAxiosError(error)) {
+    const responseData = error.response?.data;
+    let errorMessage = 'An error occurred';
+    
+    // Caso 1: Error simple con formato { "error": "mensaje" }
+    if (responseData?.error) {
+      errorMessage = responseData.error;
+    }
+    // Caso 2: Errores de validación ASP.NET con formato { "errors": { "Field": ["message"] } }
+    else if (responseData?.errors) {
+      const validationErrors = responseData.errors;
+      const errorMessages: string[] = [];
+      
+      Object.keys(validationErrors).forEach((field) => {
+        const fieldErrors = validationErrors[field];
+        if (Array.isArray(fieldErrors)) {
+          errorMessages.push(...fieldErrors);
+        }
+      });
+      
+      // Unir todos los mensajes de error
+      errorMessage = errorMessages.length > 0 
+        ? errorMessages.join(', ') 
+        : 'Validation error occurred';
+    }
+    // Caso 3: Error con message directo
+    else if (responseData?.message) {
+      errorMessage = responseData.message;
+    }
+    // Caso 4: Usar mensaje de axios
+    else if (error.message) {
+      // Evitar mensajes genéricos de HTTP
+      if (!error.message.includes('Request failed with status code')) {
+        errorMessage = error.message;
+      }
+    }
+    
     return {
-      message: error.response?.data?.message || error.message || 'An error occurred',
+      message: errorMessage,
       code: error.response?.data?.code || error.code || 'UNKNOWN_ERROR',
-      details: error.response?.data,
+      details: responseData,
     };
   }
   
@@ -58,3 +95,4 @@ export const transformError = (error: unknown): BaseError => {
     details: error,
   };
 };
+
