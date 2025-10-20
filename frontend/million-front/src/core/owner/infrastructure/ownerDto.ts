@@ -1,6 +1,6 @@
 // DTOs que coinciden con la API del backend .NET
 export interface OwnerDto {
-  id: string;
+  idOwner: string;
   name: string;
   address: string;
   photo?: string;
@@ -15,7 +15,7 @@ export interface CreateOwnerDto {
 }
 
 export interface UpdateOwnerDto {
-  id: string;
+  idOwner: string;
   name?: string;
   address?: string;
   photo?: string;

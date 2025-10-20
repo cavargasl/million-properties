@@ -33,7 +33,7 @@ export function OwnersList() {
   const filteredOwners = owners?.filter(
     (owner) =>
       owner.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      owner.address.toLowerCase().includes(searchQuery.toLowerCase())
+    owner.address.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleCreateOwner = () => {
@@ -132,6 +132,14 @@ export function OwnersList() {
                 className="pl-10"
               />
             </div>
+            {searchQuery && (
+              <Button 
+                variant="outline" 
+                onClick={() => setSearchQuery('')}
+              >
+                Limpiar
+              </Button>
+            )}
           </div>
         </CardContent>
       </Card>

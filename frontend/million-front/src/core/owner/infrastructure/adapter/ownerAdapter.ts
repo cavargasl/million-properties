@@ -9,7 +9,7 @@ export const transformOwnerFromDto = (dto: OwnerDto | null): Owner | null => {
   if (!dto) return null;
 
   const mapping: Record<keyof OwnerDto, keyof Owner> = {
-    id: 'id',
+    idOwner: 'id',
     name: 'name',
     address: 'address',
     photo: 'photo',
@@ -45,7 +45,7 @@ export const transformUpdateOwnerToDto = (owner: UpdateOwnerRequest): UpdateOwne
 
   const mapping: Record<
     keyof Omit<UpdateOwnerRequest, 'id'>,
-    keyof Omit<UpdateOwnerDto, 'id'>
+    keyof Omit<UpdateOwnerDto, 'idOwner'>
   > = {
     name: 'name',
     address: 'address',
@@ -53,12 +53,12 @@ export const transformUpdateOwnerToDto = (owner: UpdateOwnerRequest): UpdateOwne
     birthday: 'birthday',
   };
 
-  const dto = transformDtoObject<Omit<UpdateOwnerRequest, 'id'>, Omit<UpdateOwnerDto, 'id'>>(
+  const dto = transformDtoObject<Omit<UpdateOwnerRequest, 'id'>, Omit<UpdateOwnerDto, 'idOwner'>>(
     ownerWithoutId,
     mapping
   )
     .removeUndefined()
     .result();
 
-  return { id, ...dto };
+  return { idOwner: id, ...dto };
 };
