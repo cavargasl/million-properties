@@ -51,6 +51,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
+                    CodeInternal = property.CodeInternal,
+                    Year = property.Year,
                     Image = firstImage, // ✅ Solo una imagen como requiere el DTO
                     OwnerName = owner?.Name // ✅ Nombre del propietario
                 });
@@ -91,6 +93,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
+                    CodeInternal = property.CodeInternal,
+                    Year = property.Year,
                     Image = firstImage,
                     OwnerName = owner?.Name
                 });
@@ -170,6 +174,8 @@ namespace Million.API.Services
                 Name = property.Name,
                 Address = property.Address,
                 Price = property.Price,
+                CodeInternal = property.CodeInternal,
+                Year = property.Year,
                 Image = null, // Nueva propiedad sin imagen
                 OwnerName = owner?.Name
             };
@@ -230,6 +236,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
+                    CodeInternal = property.CodeInternal,
+                    Year = property.Year,
                     Image = firstImage,
                     OwnerName = owner?.Name
                 });
@@ -267,6 +275,8 @@ namespace Million.API.Services
                     Name = property.Name,
                     Address = property.Address,
                     Price = property.Price,
+                    CodeInternal = property.CodeInternal,
+                    Year = property.Year,
                     Image = firstImage,
                     OwnerName = owner?.Name
                 });
