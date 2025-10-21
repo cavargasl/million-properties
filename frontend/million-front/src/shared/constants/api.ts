@@ -3,6 +3,4 @@ export const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://localhos
 export const API_ENDPOINTS = {
   PROPERTIES: '/properties',
   OWNERS: '/owners',
-  PROPERTY_IMAGES: '/propertyimages',
-  PROPERTY_TRACES: '/propertytraces',
 } as const;

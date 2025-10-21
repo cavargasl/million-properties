@@ -39,7 +39,7 @@ export default function RootLayout({
             <div className="flex-1 container mx-auto px-4">{children}</div>
             <Footer />
           </div>
-          <Toaster richColors duration={2000} closeButton />
+          <Toaster richColors closeButton />
         </Providers>
       </body>
     </html>

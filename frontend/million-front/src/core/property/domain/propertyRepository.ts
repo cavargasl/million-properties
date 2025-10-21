@@ -25,7 +25,8 @@ export interface PropertyImageRepository {
   getByPropertyId(propertyId: string): Promise<PropertyImagesResponse>;
   create(propertyId: string, fileUrl: string, enabled?: boolean): Promise<PropertyImageResponse>;
   createBulk(propertyId: string, images: Array<{ fileUrl: string; enabled?: boolean }>): Promise<PropertyImagesResponse>;
-  delete(id: string): Promise<PropertyImageResponse>;
+  delete(propertyId: string, id: string): Promise<PropertyImageResponse>;
+  toggleEnabled(propertyId: string, id: string, enabled: boolean): Promise<PropertyImageResponse>;
 }
 
 export interface PropertyTraceRepository {

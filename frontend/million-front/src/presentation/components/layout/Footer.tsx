@@ -1,6 +1,6 @@
 import Link from 'next/link';
-import { Building2, Github, Linkedin, Mail } from 'lucide-react';
-import { SITE_CONFIG } from '@/shared/constants/navigation';
+import { Building2, Github, Linkedin } from 'lucide-react';
+import { NAVIGATION_LINKS, SITE_CONFIG } from '@/shared/constants/navigation';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -24,21 +24,15 @@ export function Footer() {
           <div>
             <h3 className="font-semibold mb-4">Navegación</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>
-                <Link href="/" className="hover:text-primary transition-colors">
-                  Inicio
-                </Link>
-              </li>
-              <li>
-                <Link href="/properties" className="hover:text-primary transition-colors">
-                  Propiedades
-                </Link>
-              </li>
-              <li>
-                <Link href="/owners" className="hover:text-primary transition-colors">
-                  Propietarios
-                </Link>
-              </li>
+              {
+                NAVIGATION_LINKS.map(({ href, name }) => (
+                  <li key={href}>
+                    <Link href={href} className="hover:text-primary transition-colors">
+                      {name}
+                    </Link>
+                  </li>
+                ))
+              }
             </ul>
           </div>
 
@@ -47,17 +41,17 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Recursos</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
-                <Link href="/docs" className="hover:text-primary transition-colors">
+                <Link href="#" className="hover:text-primary transition-colors">
                   Documentación
                 </Link>
               </li>
               <li>
-                <Link href="/api" className="hover:text-primary transition-colors">
+                <Link href="#" className="hover:text-primary transition-colors">
                   API
                 </Link>
               </li>
               <li>
-                <Link href="/support" className="hover:text-primary transition-colors">
+                <Link href="#" className="hover:text-primary transition-colors">
                   Soporte
                 </Link>
               </li>
@@ -69,7 +63,7 @@ export function Footer() {
             <h3 className="font-semibold mb-4">Contacto</h3>
             <div className="flex gap-4">
               <a
-                href="https://github.com"
+                href="https://github.com/cavargasl/million-properties"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
@@ -78,20 +72,13 @@ export function Footer() {
                 <Github className="h-5 w-5" />
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/in/cavargasl/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-muted-foreground hover:text-primary transition-colors"
                 aria-label="LinkedIn"
               >
                 <Linkedin className="h-5 w-5" />
-              </a>
-              <a
-                href="mailto:contact@millionproperties.com"
-                className="text-muted-foreground hover:text-primary transition-colors"
-                aria-label="Email"
-              >
-                <Mail className="h-5 w-5" />
               </a>
             </div>
           </div>

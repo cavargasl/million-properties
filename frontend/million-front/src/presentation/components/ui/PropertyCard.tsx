@@ -1,7 +1,3 @@
-/**
- * PropertyCard component to display individual property information
- */
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Property } from '@/core/property';

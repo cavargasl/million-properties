@@ -81,15 +81,44 @@ export function useDeletePropertyImage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (imageId: string) => {
-      const result = await axiosPropertyImageRepository.delete(imageId);
+    mutationFn: async ({propertyId, imageId}: {propertyId: string; imageId: string}) => {
+      const result = await axiosPropertyImageRepository.delete(propertyId, imageId);
       if (result.error) throw result.error;
       return result.data;
     },
-    onSuccess: () => {
-      // Invalidate all property images
+    onSuccess: (_, variables) => {
+      // Invalidate property images for the specific property
       queryClient.invalidateQueries({
-        queryKey: propertyImageKeys.all,
+        queryKey: propertyImageKeys.byProperty(variables.propertyId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook to toggle enabled/disabled state of a property image
+ */
+export function useTogglePropertyImageEnabled() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      propertyId,
+      imageId,
+      enabled,
+    }: {
+      propertyId: string;
+      imageId: string;
+      enabled: boolean;
+    }) => {
+      const result = await axiosPropertyImageRepository.toggleEnabled(propertyId, imageId, enabled);
+      if (result.error) throw result.error;
+      return result.data;
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate property images for the specific property
+      queryClient.invalidateQueries({
+        queryKey: propertyImageKeys.byProperty(variables.propertyId),
       });
     },
   });

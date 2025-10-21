@@ -8,7 +8,7 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
   async getByPropertyId(propertyId: string) {
     try {
       const { data } = await apiClient.get<PropertyImageDto[]>(
-        `${API_ENDPOINTS.PROPERTY_IMAGES}/property/${propertyId}`
+        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images`
       );
 
       const transformedData =
@@ -65,12 +65,23 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
     }
   },
 
-  async delete(id: string) {
+  async delete(propertyId: string, id: string) {
     try {
       const { data } = await apiClient.delete<PropertyImageDto>(
-        `${API_ENDPOINTS.PROPERTY_IMAGES}/${id}`
+        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/${id}`
       );
       return { data: transformPropertyImageFromDto(data), error: null };
+    } catch (error) {
+      return { data: null, error: transformError(error) };
+    }
+  },
+
+  async toggleEnabled(propertyId: string, id: string, enabled: boolean) {
+    try {
+      await apiClient.patch(
+        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/${id}/toggle?enabled=${enabled}`
+      );
+      return { data: null, error: null };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }

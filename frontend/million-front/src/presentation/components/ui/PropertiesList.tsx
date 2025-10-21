@@ -1,7 +1,3 @@
-/**
- * PropertiesList component with pagination
- */
-
 'use client';
 
 import { useState } from 'react';
