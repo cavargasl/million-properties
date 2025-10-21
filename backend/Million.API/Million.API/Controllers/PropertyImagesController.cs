@@ -122,6 +122,57 @@ namespace Million.API.Controllers
         }
 
         /// <summary>
+        /// Add multiple images to property in bulk
+        /// </summary>
+        /// <param name="propertyId">Property ID</param>
+        /// <param name="imageDtos">List of images data</param>
+        /// <returns>Created images</returns>
+        [HttpPost("bulk")]
+        [ProducesResponseType(typeof(IEnumerable<PropertyImageDto>), StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<IEnumerable<PropertyImageDto>>> AddImagesBulk(
+            string propertyId, 
+            [FromBody] List<CreatePropertyImageDto> imageDtos)
+        {
+            // Validar ModelState (Data Annotations)
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            // Validar que la lista no esté vacía
+            if (imageDtos == null || imageDtos.Count == 0)
+            {
+                return BadRequest(new { error = "At least one image is required" });
+            }
+
+            // Validar límite máximo de imágenes
+            if (imageDtos.Count > 10)
+            {
+                return BadRequest(new { error = "Cannot upload more than 10 images at once" });
+            }
+
+            try
+            {
+                var images = await _imageService.AddImagesBulkAsync(propertyId, imageDtos);
+                return CreatedAtAction(
+                    nameof(GetByPropertyId), 
+                    new { propertyId }, 
+                    images);
+            }
+            catch (InvalidOperationException ex)
+            {
+                _logger.LogWarning(ex, "Validation error adding images in bulk to property {PropertyId}", propertyId);
+                return BadRequest(new { error = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error adding images in bulk to property {PropertyId}", propertyId);
+                return StatusCode(500, new { error = "An error occurred while adding the images" });
+            }
+        }
+
+        /// <summary>
         /// Get image by ID
         /// </summary>
         /// <param name="propertyId">Property ID</param>

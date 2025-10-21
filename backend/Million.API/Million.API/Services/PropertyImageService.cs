@@ -82,6 +82,36 @@ namespace Million.API.Services
         }
 
         /// <summary>
+        /// Add multiple images to property in bulk
+        /// </summary>
+        public async Task<IEnumerable<PropertyImageDto>> AddImagesBulkAsync(string propertyId, List<CreatePropertyImageDto> imageDtos)
+        {
+            // Verificar que la propiedad exista
+            var property = await _propertyRepository.GetByIdAsync(propertyId);
+            if (property == null)
+            {
+                throw new InvalidOperationException($"Property with ID '{propertyId}' not found");
+            }
+
+            var createdImages = new List<PropertyImageDto>();
+
+            foreach (var imageDto in imageDtos)
+            {
+                var image = new PropertyImage
+                {
+                    IdProperty = propertyId,
+                    File = imageDto.File,
+                    Enabled = imageDto.Enabled
+                };
+
+                await _imageRepository.CreateAsync(image);
+                createdImages.Add(MapToDto(image));
+            }
+
+            return createdImages;
+        }
+
+        /// <summary>
         /// Update image
         /// </summary>
         public async Task<PropertyImageDto?> UpdateImageAsync(string id, UpdatePropertyImageDto updateDto)
