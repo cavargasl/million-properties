@@ -24,9 +24,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Pencil, Trash2, Eye, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Pencil, Trash2, Eye, ChevronLeft, ChevronRight, ImagePlus } from 'lucide-react';
 import type { Property, PaginationMetadata } from '@/core/property';
 import { useDeleteProperty } from '@/presentation/hooks/useProperties';
+import { PropertyImageUpload } from '@/presentation/components/property/PropertyImageUpload';
 import { toast } from 'sonner';
 
 interface PropertyManagementTableProps {
@@ -46,12 +47,19 @@ export function PropertyManagementTable({
 }: PropertyManagementTableProps) {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState<Property | null>(null);
+  const [imagesDialogOpen, setImagesDialogOpen] = useState(false);
+  const [propertyForImages, setPropertyForImages] = useState<Property | null>(null);
 
   const deleteMutation = useDeleteProperty();
 
   const handleDeleteClick = (property: Property) => {
     setPropertyToDelete(property);
     setDeleteDialogOpen(true);
+  };
+
+  const handleImagesClick = (property: Property) => {
+    setPropertyForImages(property);
+    setImagesDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -157,6 +165,15 @@ export function PropertyManagementTable({
                         <Eye className="h-4 w-4" />
                       </Button>
                     )}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleImagesClick(property)}
+                      title="Gestionar imágenes"
+                      className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                    >
+                      <ImagePlus className="h-4 w-4" />
+                    </Button>
                     <Button
                       variant="ghost"
                       size="icon"
@@ -284,6 +301,27 @@ export function PropertyManagementTable({
             >
               {deleteMutation.isPending ? 'Eliminando...' : 'Eliminar'}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Images Management Dialog */}
+      <Dialog open={imagesDialogOpen} onOpenChange={setImagesDialogOpen}>
+        <DialogContent className="sm:max-w-[700px]">
+          <DialogHeader>
+            <DialogTitle>Gestionar Imágenes</DialogTitle>
+            <DialogDescription>
+              Suba y administre las imágenes de <strong>{propertyForImages?.name}</strong>
+            </DialogDescription>
+          </DialogHeader>
+          {propertyForImages && (
+            <PropertyImageUpload
+              propertyId={propertyForImages.id}
+              onClose={() => setImagesDialogOpen(false)}
+            />
+          )}
+          <DialogFooter>
+            <Button onClick={() => setImagesDialogOpen(false)}>Cerrar</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

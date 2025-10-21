@@ -1,10 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Button } from '@/components/ui/button';
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -13,45 +10,54 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
-import { useOwners } from '@/presentation/hooks/useOwners';
-import { Skeleton } from '@/components/ui/skeleton';
-import { AlertCircle } from 'lucide-react';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+} from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useOwners } from "@/presentation/hooks/useOwners";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { AlertCircle } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import * as z from "zod";
 
 // Form validation schema
 const propertyFormSchema = z.object({
   name: z
     .string()
-    .min(2, 'El nombre debe tener al menos 2 caracteres')
-    .max(100, 'El nombre no puede exceder 100 caracteres'),
+    .min(2, "El nombre debe tener al menos 2 caracteres")
+    .max(100, "El nombre no puede exceder 100 caracteres"),
   address: z
     .string()
-    .min(5, 'La dirección debe tener al menos 5 caracteres')
-    .max(250, 'La dirección no puede exceder 250 caracteres'),
+    .min(5, "La dirección debe tener al menos 5 caracteres")
+    .max(250, "La dirección no puede exceder 250 caracteres"),
   price: z
     .number()
-    .positive('El precio debe ser mayor a 0')
-    .min(0.01, 'El precio debe ser mayor a 0'),
+    .positive("El precio debe ser mayor a 0")
+    .min(0.01, "El precio debe ser mayor a 0"),
   codeInternal: z
     .string()
-    .min(3, 'El código debe tener al menos 3 caracteres')
-    .max(50, 'El código no puede exceder 50 caracteres')
-    .regex(/^[A-Za-z0-9-_]+$/, 'El código solo puede contener letras, números, guiones y guiones bajos'),
+    .min(3, "El código debe tener al menos 3 caracteres")
+    .max(50, "El código no puede exceder 50 caracteres")
+    .regex(
+      /^[A-Za-z0-9-_]+$/,
+      "El código solo puede contener letras, números, guiones y guiones bajos"
+    ),
   year: z
     .number()
-    .int('El año debe ser un número entero')
-    .min(1800, 'El año no puede ser anterior a 1800')
-    .max(new Date().getFullYear() + 5, `El año no puede ser más de 5 años en el futuro`),
-  ownerId: z.string().min(1, 'Debe seleccionar un propietario'),
+    .int("El año debe ser un número entero")
+    .min(1800, "El año no puede ser anterior a 1800")
+    .max(
+      new Date().getFullYear() + 5,
+      `El año no puede ser más de 5 años en el futuro`
+    ),
+  ownerId: z.string().min(1, "Debe seleccionar un propietario"),
 });
 
 export type PropertyFormValues = z.infer<typeof propertyFormSchema>;
@@ -69,19 +75,23 @@ export function PropertyForm({
   onSubmit,
   onCancel,
   isSubmitting = false,
-  submitLabel = 'Guardar',
+  submitLabel = "Guardar",
 }: PropertyFormProps) {
-  const { data: owners, isLoading: isLoadingOwners, isError: isOwnersError } = useOwners();
+  const {
+    data: owners,
+    isLoading: isLoadingOwners,
+    isError: isOwnersError,
+  } = useOwners();
 
   const form = useForm<PropertyFormValues>({
     resolver: zodResolver(propertyFormSchema),
     defaultValues: {
-      name: initialValues?.name || '',
-      address: initialValues?.address || '',
+      name: initialValues?.name || "",
+      address: initialValues?.address || "",
       price: initialValues?.price || 0,
-      codeInternal: initialValues?.codeInternal || '',
+      codeInternal: initialValues?.codeInternal || "",
       year: initialValues?.year || new Date().getFullYear(),
-      ownerId: initialValues?.ownerId || '',
+      ownerId: initialValues?.ownerId || "",
     },
   });
 
@@ -89,12 +99,12 @@ export function PropertyForm({
   useEffect(() => {
     if (initialValues) {
       form.reset({
-        name: initialValues.name || '',
-        address: initialValues.address || '',
+        name: initialValues.name || "",
+        address: initialValues.address || "",
         price: initialValues.price || 0,
-        codeInternal: initialValues.codeInternal || '',
+        codeInternal: initialValues.codeInternal || "",
         year: initialValues.year || new Date().getFullYear(),
-        ownerId: initialValues.ownerId || '',
+        ownerId: initialValues.ownerId || "",
       });
     }
   }, [initialValues, form]);
@@ -149,7 +159,11 @@ export function PropertyForm({
                   <Input
                     type="number"
                     placeholder="150000000"
-                    onFocus={e => Number(e.target.value) === 0 ? field.onChange("") : field.onChange(e.target.value)}
+                    onFocus={(e) =>
+                      Number(e.target.value) === 0
+                        ? field.onChange("")
+                        : field.onChange(e.target.value)
+                    }
                     {...field}
                     onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
@@ -171,7 +185,9 @@ export function PropertyForm({
                     type="number"
                     placeholder="2024"
                     {...field}
-                    onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                    onChange={(e) =>
+                      field.onChange(parseInt(e.target.value) || 0)
+                    }
                   />
                 </FormControl>
                 <FormMessage />
@@ -211,7 +227,8 @@ export function PropertyForm({
                 <Alert variant="destructive">
                   <AlertCircle className="h-4 w-4" />
                   <AlertDescription>
-                    Error al cargar los propietarios. Por favor intente de nuevo.
+                    Error al cargar los propietarios. Por favor intente de
+                    nuevo.
                   </AlertDescription>
                 </Alert>
               ) : (
@@ -247,12 +264,17 @@ export function PropertyForm({
         {/* Form Actions */}
         <div className="flex justify-end gap-4 pt-4">
           {onCancel && (
-            <Button type="button" variant="outline" onClick={onCancel} disabled={isSubmitting}>
+            <Button
+              type="button"
+              variant="outline"
+              onClick={onCancel}
+              disabled={isSubmitting}
+            >
               Cancelar
             </Button>
           )}
           <Button type="submit" disabled={isSubmitting}>
-            {isSubmitting ? 'Guardando...' : submitLabel}
+            {isSubmitting ? "Guardando..." : submitLabel}
           </Button>
         </div>
       </form>

@@ -36,6 +36,11 @@ export interface PropertyImageDto {
   file: string;
   enabled: boolean;
 }
+export interface CreatePropertyRequestDto {
+  IdProperty: string;
+  File: string;
+  Enabled: boolean;
+}
 
 export interface PropertyDetailDto {
   idProperty: string;

@@ -33,8 +33,35 @@ export function useCreatePropertyImage() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ propertyId, file }: { propertyId: string; file: File }) => {
-      const result = await axiosPropertyImageRepository.create(propertyId, file);
+    mutationFn: async ({ propertyId, fileUrl, enabled = true }: { propertyId: string; fileUrl: string; enabled?: boolean }) => {
+      const result = await axiosPropertyImageRepository.create(propertyId, fileUrl, enabled);
+      if (result.error) throw result.error;
+      return result.data;
+    },
+    onSuccess: (_, variables) => {
+      // Invalidate property images for the specific property
+      queryClient.invalidateQueries({
+        queryKey: propertyImageKeys.byProperty(variables.propertyId),
+      });
+    },
+  });
+}
+
+/**
+ * Hook to create/upload multiple property images in bulk
+ */
+export function useCreatePropertyImagesBulk() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ 
+      propertyId, 
+      images 
+    }: { 
+      propertyId: string; 
+      images: Array<{ fileUrl: string; enabled?: boolean }> 
+    }) => {
+      const result = await axiosPropertyImageRepository.createBulk(propertyId, images);
       if (result.error) throw result.error;
       return result.data;
     },

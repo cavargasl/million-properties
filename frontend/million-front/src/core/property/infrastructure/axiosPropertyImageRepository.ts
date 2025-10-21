@@ -2,7 +2,7 @@ import { apiClient, transformError } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/shared/constants/api';
 import type { PropertyImageRepository } from '../domain/propertyRepository';
 import { transformPropertyImageFromDto } from './adapter/propertyAdapter';
-import type { PropertyImageDto } from './propertyDto';
+import type { CreatePropertyRequestDto, PropertyImageDto } from './propertyDto';
 
 export const axiosPropertyImageRepository: PropertyImageRepository = {
   async getByPropertyId(propertyId: string) {
@@ -22,23 +22,44 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
     }
   },
 
-  async create(propertyId: string, file: File) {
+  async create(propertyId: string, fileUrl: string, enabled: boolean = true) {
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('IdProperty', propertyId);
+      const payload = {
+        IdProperty: propertyId,
+        File: fileUrl,
+        Enabled: enabled,
+      };
 
       const { data } = await apiClient.post<PropertyImageDto>(
-        API_ENDPOINTS.PROPERTY_IMAGES,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        }
+        API_ENDPOINTS.PROPERTIES + `/${propertyId}/images`,
+        payload
       );
 
       return { data: transformPropertyImageFromDto(data), error: null };
+    } catch (error) {
+      return { data: null, error: transformError(error) };
+    }
+  },
+
+  async createBulk(propertyId: string, images: Array<{ fileUrl: string; enabled?: boolean }>) {
+    try {
+      const payload: CreatePropertyRequestDto[] = images.map((img) => ({
+        IdProperty: propertyId,
+        File: img.fileUrl,
+        Enabled: img.enabled ?? true,
+      }));
+
+      const { data } = await apiClient.post<PropertyImageDto[]>(
+        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/bulk`,
+        payload
+      );
+
+      const transformedData =
+        data
+          ?.map(transformPropertyImageFromDto)
+          .filter((item): item is NonNullable<typeof item> => item !== null) || [];
+
+      return { data: transformedData, error: null };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }
