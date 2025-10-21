@@ -1,8 +1,3 @@
-/**
- * PropertyForm component for creating and updating properties
- * Includes owner selection from existing owners
- */
-
 'use client';
 
 import { useEffect } from 'react';
@@ -62,7 +57,7 @@ const propertyFormSchema = z.object({
 export type PropertyFormValues = z.infer<typeof propertyFormSchema>;
 
 interface PropertyFormProps {
-  initialValues?: Partial<PropertyFormValues>;
+  initialValues?: PropertyFormValues;
   onSubmit: (values: PropertyFormValues) => void;
   onCancel?: () => void;
   isSubmitting?: boolean;
@@ -154,8 +149,9 @@ export function PropertyForm({
                   <Input
                     type="number"
                     placeholder="150000000"
+                    onFocus={e => Number(e.target.value) === 0 ? field.onChange("") : field.onChange(e.target.value)}
                     {...field}
-                    onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    onChange={(e) => field.onChange(parseFloat(e.target.value))}
                   />
                 </FormControl>
                 <FormMessage />

@@ -7,3 +7,4 @@ export * from './application/propertyService';
 
 // Infrastructure exports
 export * from './infrastructure/axiosPropertyRepository';
+export * from './infrastructure/axiosPropertyImageRepository';

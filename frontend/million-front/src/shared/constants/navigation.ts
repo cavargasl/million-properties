@@ -8,7 +8,7 @@ export const NAVIGATION_LINKS = [
     href: '/properties',
   },
   {
-    name: 'Gestión',
+    name: 'Gestión de Propiedades',
     href: '/properties/manage',
   },
   {
