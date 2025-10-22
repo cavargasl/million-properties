@@ -26,6 +26,7 @@ interface RandomImage {
 
 export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUploadProps) {
   const [newImages, setNewImages] = useState<RandomImage[]>([]);
+  console.log("🚀 ~ PropertyImageUpload ~ newImages:", newImages)
   const [isLoadingRandomImages, setIsLoadingRandomImages] = useState(false);
   const [imageToDelete, setImageToDelete] = useState<string | null>(null);
   const [imageToToggle, setImageToToggle] = useState<string | null>(null);
@@ -44,15 +45,27 @@ export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUpload
       const width = 800;
       const height = 600;
       
-      const randomImages: RandomImage[] = Array.from({ length: imageCount }, (_, index) => ({
-        id: `temp-${Date.now()}-${index}`,
-        url: `https://picsum.photos/${width}/${height}?random=${Date.now()}-${index}`,
-      }));
+      // Obtener URLs permanentes haciendo fetch a cada imagen
+      const imagePromises = Array.from({ length: imageCount }, async (_, index) => {
+        // Primero obtenemos una imagen aleatoria
+        const randomUrl = `https://picsum.photos/${width}/${height}?random=${Date.now()}-${index}`;
+        const response = await fetch(randomUrl);
+        
+        // La URL final después de la redirección contiene el id y hmac
+        const permanentUrl = response.url;
+        
+        return {
+          id: `temp-${Date.now()}-${index}`,
+          url: permanentUrl,
+        };
+      });
 
+      const randomImages = await Promise.all(imagePromises);
       setNewImages(randomImages);
       toast.success(`${imageCount} imágenes aleatorias obtenidas`);
     } catch (error: any) {
       toast.error('Error al obtener imágenes aleatorias');
+      console.error('Error fetching random images:', error);
     } finally {
       setIsLoadingRandomImages(false);
     }
@@ -128,7 +141,7 @@ export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUpload
             <Loader2 className="h-8 w-8 animate-spin text-gray-400" />
           </div>
         ) : existingImages && existingImages.length > 0 ? (
-          <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
+          <div className="grid sm:grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
             {existingImages.map((image: PropertyImage) => (
               <div
                 key={image.id}
@@ -263,7 +276,7 @@ export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUpload
         </div>
 
         {newImages.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(250px,1fr))] gap-3">
             {newImages.map((image) => (
               <div
                 key={image.id}
@@ -307,7 +320,7 @@ export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUpload
             ))}
           </div>
         ) : (
-          <div className="border-2 border-dashed rounded-lg p-6 text-center text-muted-foreground">
+          <div className="border-2 border-dashed rounded-lg p-6 text-center text-muted-foreground" onClick={fetchRandomImages}>
             <ImageIcon className="h-10 w-10 mx-auto mb-2 opacity-50" />
             <p className="text-xs">Haga clic en el botón para obtener imágenes aleatorias</p>
             <p className="text-xs mt-1 text-muted-foreground/80">

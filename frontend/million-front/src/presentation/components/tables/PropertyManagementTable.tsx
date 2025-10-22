@@ -307,7 +307,7 @@ export function PropertyManagementTable({
 
       {/* Images Management Dialog */}
       <Dialog open={imagesDialogOpen} onOpenChange={setImagesDialogOpen} modal>
-        <DialogContent className="sm:max-w-[700px] md:max-w-[70vh] lg:max-w-[80vh] overflow-hidden">
+        <DialogContent className='overflow-y-auto max-h-[80vh] w-auto sm:max-w-[90vw]'>
           <DialogHeader>
             <DialogTitle>Gestionar Imágenes</DialogTitle>
             <DialogDescription>

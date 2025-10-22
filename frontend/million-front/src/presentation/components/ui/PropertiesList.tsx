@@ -1,22 +1,28 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { PropertyCard } from './PropertyCard';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
-import { usePropertiesPaginated } from '@/presentation/hooks/useProperties';
-import type { PropertyFilters } from '@/core/property';
-import { ChevronLeft, ChevronRight, Search } from 'lucide-react';
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
+import type { PropertyFilters } from "@/core/property";
+import { usePropertiesPaginated } from "@/presentation/hooks/useProperties";
+import { ChevronLeft, ChevronRight, Search } from "lucide-react";
+import { useState } from "react";
+import { PropertyCard } from "./PropertyCard";
 
-const PAGE_SIZE = 9; // 3x3 grid
+const PAGE_SIZE = 9;
 
 export function PropertiesList() {
   const [currentPage, setCurrentPage] = useState(1);
   const [filters, setFilters] = useState<PropertyFilters>({});
-  const [searchName, setSearchName] = useState('');
-  const [searchAddress, setSearchAddress] = useState('');
+  const [searchName, setSearchName] = useState("");
+  const [searchAddress, setSearchAddress] = useState("");
 
   const { data, isLoading, isError, error } = usePropertiesPaginated(filters, {
     pageNumber: currentPage,
@@ -33,8 +39,8 @@ export function PropertiesList() {
   };
 
   const handleClearFilters = () => {
-    setSearchName('');
-    setSearchAddress('');
+    setSearchName("");
+    setSearchAddress("");
     setFilters({});
     setCurrentPage(1);
   };
@@ -61,7 +67,7 @@ export function PropertiesList() {
         <CardHeader>
           <CardTitle className="text-red-800">Error</CardTitle>
           <CardDescription className="text-red-600">
-            {error?.message || 'Error al cargar las propiedades'}
+            {error?.message || "Error al cargar las propiedades"}
           </CardDescription>
         </CardHeader>
       </Card>
@@ -74,7 +80,9 @@ export function PropertiesList() {
       <Card>
         <CardHeader>
           <CardTitle>Buscar Propiedades</CardTitle>
-          <CardDescription>Filtra las propiedades por nombre o dirección</CardDescription>
+          <CardDescription>
+            Filtra las propiedades por nombre o dirección
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -82,13 +90,13 @@ export function PropertiesList() {
               placeholder="Buscar por nombre..."
               value={searchName}
               onChange={(e) => setSearchName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
             <Input
               placeholder="Buscar por dirección..."
               value={searchAddress}
               onChange={(e) => setSearchAddress(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             />
             <div className="flex gap-2">
               <Button onClick={handleSearch} className="flex-1">
@@ -126,26 +134,26 @@ export function PropertiesList() {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {data.items.map((property) => (
-              <PropertyCard
-                key={property.id}
-                property={property}
-                onSelect={(prop) => {
-                  // You can add navigation to detail page here
-                  console.log('Selected property:', prop);
-                }}
-              />
+              <PropertyCard key={property.id} property={property} />
             ))}
           </div>
 
           {/* Pagination Controls */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-4">
             <div className="text-sm text-gray-600">
-              Mostrando{' '}
+              Mostrando{" "}
               <span className="font-semibold">
-                {(currentPage - 1) * PAGE_SIZE + 1} -{' '}
-                {Math.min(currentPage * PAGE_SIZE, data.pagination.totalRecords)}
-              </span>{' '}
-              de <span className="font-semibold">{data.pagination.totalRecords}</span> propiedades
+                {(currentPage - 1) * PAGE_SIZE + 1} -{" "}
+                {Math.min(
+                  currentPage * PAGE_SIZE,
+                  data.pagination.totalRecords
+                )}
+              </span>{" "}
+              de{" "}
+              <span className="font-semibold">
+                {data.pagination.totalRecords}
+              </span>{" "}
+              propiedades
             </div>
 
             <div className="flex items-center gap-2">
@@ -161,42 +169,43 @@ export function PropertiesList() {
 
               {/* Page numbers */}
               <div className="flex gap-1">
-                {Array.from({ length: data.pagination.totalPages }, (_, i) => i + 1).map(
-                  (page) => {
-                    // Show first page, last page, current page, and pages around current
-                    const showPage =
-                      page === 1 ||
-                      page === data.pagination.totalPages ||
-                      (page >= currentPage - 1 && page <= currentPage + 1);
+                {Array.from(
+                  { length: data.pagination.totalPages },
+                  (_, i) => i + 1
+                ).map((page) => {
+                  // Show first page, last page, current page, and pages around current
+                  const showPage =
+                    page === 1 ||
+                    page === data.pagination.totalPages ||
+                    (page >= currentPage - 1 && page <= currentPage + 1);
 
-                    // Show ellipsis
-                    const showEllipsis =
-                      (page === 2 && currentPage > 3) ||
-                      (page === data.pagination.totalPages - 1 &&
-                        currentPage < data.pagination.totalPages - 2);
+                  // Show ellipsis
+                  const showEllipsis =
+                    (page === 2 && currentPage > 3) ||
+                    (page === data.pagination.totalPages - 1 &&
+                      currentPage < data.pagination.totalPages - 2);
 
-                    if (showEllipsis) {
-                      return (
-                        <span key={page} className="px-3 py-1 text-gray-400">
-                          ...
-                        </span>
-                      );
-                    }
-
-                    if (!showPage) return null;
-
+                  if (showEllipsis) {
                     return (
-                      <Button
-                        key={page}
-                        variant={page === currentPage ? 'default' : 'outline'}
-                        size="sm"
-                        onClick={() => handlePageChange(page)}
-                      >
-                        {page}
-                      </Button>
+                      <span key={page} className="px-3 py-1 text-gray-400">
+                        ...
+                      </span>
                     );
                   }
-                )}
+
+                  if (!showPage) return null;
+
+                  return (
+                    <Button
+                      key={page}
+                      variant={page === currentPage ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => handlePageChange(page)}
+                    >
+                      {page}
+                    </Button>
+                  );
+                })}
               </div>
 
               <Button
@@ -217,7 +226,9 @@ export function PropertiesList() {
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="text-6xl opacity-20">🏠</div>
               <div>
-                <h3 className="text-lg font-semibold">No se encontraron propiedades</h3>
+                <h3 className="text-lg font-semibold">
+                  No se encontraron propiedades
+                </h3>
                 <p className="text-sm text-gray-500">
                   Intenta ajustar los filtros de búsqueda
                 </p>

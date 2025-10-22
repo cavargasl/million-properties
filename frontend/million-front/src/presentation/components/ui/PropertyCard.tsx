@@ -1,7 +1,11 @@
+"use client";
+
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import type { Property } from '@/core/property';
 import Image from 'next/image';
+import { useState } from 'react';
+import { PropertyImagesCarousel } from '../property';
 
 interface PropertyCardProps {
   property: Property;
@@ -9,8 +13,9 @@ interface PropertyCardProps {
 }
 
 export function PropertyCard({ property, onSelect }: PropertyCardProps) {
+  const [isCarouselOpen, setIsCarouselOpen] = useState(false);
   const handleClick = () => {
-    onSelect?.(property);
+    setIsCarouselOpen(e => !e);
   };
 
   const formattedPrice = new Intl.NumberFormat('es-CO', {
@@ -20,8 +25,16 @@ export function PropertyCard({ property, onSelect }: PropertyCardProps) {
   }).format(property.price);
 
   return (
+    <>
+    {/* Property Images Carousel Dialog */}
+          <PropertyImagesCarousel
+            property={property}
+            open={isCarouselOpen}
+            onOpenChange={setIsCarouselOpen}
+          />
+    
     <Card
-      className="cursor-pointer hover:shadow-lg transition-shadow duration-300"
+      className="cursor-pointer hover:shadow-lg transition-shadow duration-300 pt-0"
       onClick={handleClick}
     >
       <div className="relative h-48 w-full overflow-hidden rounded-t-lg bg-gray-200">
@@ -89,5 +102,6 @@ export function PropertyCard({ property, onSelect }: PropertyCardProps) {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }

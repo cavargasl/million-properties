@@ -9,6 +9,10 @@ const nextConfig: NextConfig = {
         hostname: 'picsum.photos',
       },
       {
+        protocol: 'https',
+        hostname: 'fastly.picsum.photos',
+      },
+      {
         protocol: 'http',
         hostname: 'localhost',
       },
