@@ -82,4 +82,15 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
       return { data: null, error: transformError(error) };
     }
   },
+  async toggleEnabled(propertyId: string, id: string, enabled: boolean) {
+    try {
+      const { data } = await apiClient.patch<PropertyImageDto>(
+        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/${id}/toggle`,
+        { enabled }
+      );
+      return { data: transformPropertyImageFromDto(data), error: null };
+    } catch (error) {
+      return { data: null, error: transformError(error) };
+    }
+  }
 };

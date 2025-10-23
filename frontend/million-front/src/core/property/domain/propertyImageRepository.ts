@@ -11,4 +11,5 @@ export interface PropertyImageRepository {
   createBulk(propertyId: string, images: CreatePropertyImageRequest[]): Promise<PropertyImagesResponse>;
   update(input: UpdatePropertyImageRequest): Promise<PropertyImageResponse>;
   delete(propertyId: string, id: string): Promise<PropertyImageResponse>;
+  toggleEnabled(propertyId: string, id: string, enabled: boolean): Promise<PropertyImageResponse>;
 }

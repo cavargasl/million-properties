@@ -122,4 +122,27 @@ export const PropertyImageService = (repository: PropertyImageRepository): Prope
 
     return await repository.delete(propertyId, id);
   },
+  async toggleEnabled(propertyId, id, enabled) {
+    if (!propertyId) {
+      return {
+        data: null,
+        error: {
+          message: 'Property ID is required',
+          code: 'PROPERTY_ID_REQUIRED',
+        },
+      };
+    }
+
+    if (!id) {
+      return {
+        data: null,
+        error: {
+          message: 'Property Image ID is required',
+          code: 'PROPERTY_IMAGE_ID_REQUIRED',
+        },
+      };
+    }
+
+    return await repository.toggleEnabled(propertyId, id, enabled);
+  }
 });

@@ -9,10 +9,10 @@ import {
   usePropertyImages, 
   useCreatePropertyImagesBulk, 
   useDeletePropertyImage,
-  useTogglePropertyImageEnabled
+  useTogglePropertyImageEnabled,
 } from '@/presentation/hooks';
 import { toast } from 'sonner';
-import type { PropertyImage } from '@/core/property';
+import { PropertyImage } from '@/core/property/domain/propertyImage';
 
 interface PropertyImageUploadProps {
   propertyId: string;
@@ -115,7 +115,7 @@ export function PropertyImageUpload({ propertyId, onClose }: PropertyImageUpload
 
       await createImagesBulk.mutateAsync({
         propertyId,
-        images: imagesToUpload,
+        images: imagesToUpload.map(img => ({file: img.fileUrl, enabled: img.enabled, propertyId})),
       });
 
       toast.success(`${newImages.length} imágenes subidas exitosamente`);

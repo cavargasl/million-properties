@@ -3,14 +3,11 @@
  */
 
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { PropertyService } from '@/core/property';
-import { axiosPropertyRepository } from '@/core/property';
-import type {
-  PropertyFilters,
-  CreatePropertyRequest,
-  UpdatePropertyRequest,
-  PaginationParams,
-} from '@/core/property';
+import { PropertyService } from '@/core/property/application/propertyService';
+import { axiosPropertyRepository } from '@/core/property/infrastructure/axiosPropertyRepository';
+import type { PropertyFilters } from '@/core/property/domain/property';
+import type { CreatePropertyRequest, UpdatePropertyRequest } from '@/core/property/domain/property';
+import type { PaginationParams } from '@/core/shared/domain/types';
 
 // Create service instance
 const propertyService = PropertyService(axiosPropertyRepository);

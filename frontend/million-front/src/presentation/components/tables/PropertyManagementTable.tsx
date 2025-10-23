@@ -25,10 +25,11 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Pencil, Trash2, Eye, ChevronLeft, ChevronRight, ImagePlus } from 'lucide-react';
-import type { Property, PaginationMetadata } from '@/core/property';
+import type { Property } from '@/core/property';
 import { useDeleteProperty } from '@/presentation/hooks/useProperties';
 import { PropertyImageUpload } from '@/presentation/components/property/PropertyImageUpload';
 import { toast } from 'sonner';
+import { PaginationMetadata } from '@/core/shared';
 
 interface PropertyManagementTableProps {
   properties: Property[];
