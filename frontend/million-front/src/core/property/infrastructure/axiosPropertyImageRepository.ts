@@ -1,8 +1,14 @@
 import { apiClient, transformError } from '@/api/apiClient';
 import { API_ENDPOINTS } from '@/shared/constants/api';
-import type { PropertyImageRepository } from '../domain/propertyRepository';
-import { transformPropertyImageFromDto } from './adapter/propertyAdapter';
-import type { CreatePropertyRequestDto, PropertyImageDto } from './propertyDto';
+import type { PropertyImageRepository } from '../domain/propertyImageRepository';
+import type { CreatePropertyImageRequest } from '../domain/propertyImage';
+import {
+  transformPropertyImageFromDto,
+  transformPropertyImagesFromDto,
+  transformCreatePropertyImageToDto,
+  transformUpdatePropertyImageToDto,
+} from './adapter/propertyImageAdapter';
+import type { PropertyImageDto } from './propertyImageDto';
 
 export const axiosPropertyImageRepository: PropertyImageRepository = {
   async getByPropertyId(propertyId: string) {
@@ -11,10 +17,7 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
         `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images`
       );
 
-      const transformedData =
-        data
-          ?.map(transformPropertyImageFromDto)
-          .filter((item): item is NonNullable<typeof item> => item !== null) || [];
+      const transformedData = transformPropertyImagesFromDto(data || []);
 
       return { data: transformedData, error: null };
     } catch (error) {
@@ -22,17 +25,13 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
     }
   },
 
-  async create(propertyId: string, fileUrl: string, enabled: boolean = true) {
+  async create(input: CreatePropertyImageRequest) {
     try {
-      const payload = {
-        IdProperty: propertyId,
-        File: fileUrl,
-        Enabled: enabled,
-      };
+      const dto = transformCreatePropertyImageToDto(input);
 
       const { data } = await apiClient.post<PropertyImageDto>(
-        API_ENDPOINTS.PROPERTIES + `/${propertyId}/images`,
-        payload
+        `${API_ENDPOINTS.PROPERTIES}/${input.propertyId}/images`,
+        dto
       );
 
       return { data: transformPropertyImageFromDto(data), error: null };
@@ -41,25 +40,33 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
     }
   },
 
-  async createBulk(propertyId: string, images: Array<{ fileUrl: string; enabled?: boolean }>) {
+  async createBulk(propertyId: string, images: CreatePropertyImageRequest[]) {
     try {
-      const payload: CreatePropertyRequestDto[] = images.map((img) => ({
-        IdProperty: propertyId,
-        File: img.fileUrl,
-        Enabled: img.enabled ?? true,
-      }));
+      const payload = images.map(transformCreatePropertyImageToDto);
 
       const { data } = await apiClient.post<PropertyImageDto[]>(
         `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/bulk`,
         payload
       );
 
-      const transformedData =
-        data
-          ?.map(transformPropertyImageFromDto)
-          .filter((item): item is NonNullable<typeof item> => item !== null) || [];
+      const transformedData = transformPropertyImagesFromDto(data || []);
 
       return { data: transformedData, error: null };
+    } catch (error) {
+      return { data: null, error: transformError(error) };
+    }
+  },
+
+  async update(input) {
+    try {
+      const dto = transformUpdatePropertyImageToDto(input);
+
+      const { data } = await apiClient.put<PropertyImageDto>(
+        `${API_ENDPOINTS.PROPERTIES}/${input.propertyId}/images/${input.id}`,
+        dto
+      );
+
+      return { data: transformPropertyImageFromDto(data), error: null };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }
@@ -71,17 +78,6 @@ export const axiosPropertyImageRepository: PropertyImageRepository = {
         `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/${id}`
       );
       return { data: transformPropertyImageFromDto(data), error: null };
-    } catch (error) {
-      return { data: null, error: transformError(error) };
-    }
-  },
-
-  async toggleEnabled(propertyId: string, id: string, enabled: boolean) {
-    try {
-      await apiClient.patch(
-        `${API_ENDPOINTS.PROPERTIES}/${propertyId}/images/${id}/toggle?enabled=${enabled}`
-      );
-      return { data: null, error: null };
     } catch (error) {
       return { data: null, error: transformError(error) };
     }

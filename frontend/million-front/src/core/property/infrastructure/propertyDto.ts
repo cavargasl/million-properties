@@ -1,4 +1,6 @@
-// DTOs que coinciden con la API del backend .NET
+import type { PropertyImageDto } from './propertyImageDto';
+
+// DTOs que coinciden con la API del backend .NET para Property
 export interface PropertyDto {
   idProperty: string;
   idOwner: string;
@@ -30,18 +32,6 @@ export interface UpdatePropertyDto {
   IdOwner?: string;
 }
 
-export interface PropertyImageDto {
-  idPropertyImage: string;
-  idProperty: string;
-  file: string;
-  enabled: boolean;
-}
-export interface CreatePropertyRequestDto {
-  IdProperty: string;
-  File: string;
-  Enabled: boolean;
-}
-
 export interface PropertyDetailDto {
   idProperty: string;
   name: string;
@@ -51,15 +41,6 @@ export interface PropertyDetailDto {
   year: number;
   IdOwner: string;
   images: PropertyImageDto[];
-}
-
-export interface PropertyTraceDto {
-  id: string;
-  dateSale: string;
-  name: string;
-  value: number;
-  tax: number;
-  propertyId: string;
 }
 
 // Pagination DTOs that match the backend

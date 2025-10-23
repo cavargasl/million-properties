@@ -1,17 +1,13 @@
+import type { PaginationMetadata } from '@/core/shared/domain/types';
 import type {
   Property,
   CreatePropertyRequest,
   UpdatePropertyRequest,
-  PropertyImage,
-  PropertyTrace,
-  PaginationMetadata,
 } from '../../domain/property';
 import type {
   PropertyDto,
   CreatePropertyDto,
   UpdatePropertyDto,
-  PropertyImageDto,
-  PropertyTraceDto,
   PaginatedResponseDto,
 } from '../propertyDto';
 import { transformDtoObject } from '@/core/shared/utils/transformDtoObject';
@@ -83,44 +79,6 @@ export const transformUpdatePropertyToDto = (
     .result();
 
   return { id, ...dto };
-};
-
-/**
- * Transforms PropertyImageDto from API to PropertyImage domain entity
- */
-export const transformPropertyImageFromDto = (
-  dto: PropertyImageDto | null
-): PropertyImage | null => {
-  if (!dto) return null;
-
-  return {
-    id: dto.idPropertyImage,
-    propertyId: dto.idProperty,
-    file: dto.file,
-    enabled: dto.enabled,
-  };
-};
-
-/**
- * Transforms PropertyTraceDto from API to PropertyTrace domain entity
- */
-export const transformPropertyTraceFromDto = (
-  dto: PropertyTraceDto | null
-): PropertyTrace | null => {
-  if (!dto) return null;
-
-  const mapping: Record<keyof PropertyTraceDto, keyof PropertyTrace> = {
-    id: 'id',
-    dateSale: 'dateSale',
-    name: 'name',
-    value: 'value',
-    tax: 'tax',
-    propertyId: 'propertyId',
-  };
-
-  return transformDtoObject<PropertyTraceDto, PropertyTrace>(dto, mapping)
-    .nullOrEmptyToUndefined()
-    .result();
 };
 
 /**
