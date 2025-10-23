@@ -276,13 +276,19 @@ namespace Million.API.Controllers
         /// </summary>
         /// <param name="propertyId">Property ID</param>
         /// <param name="id">Image ID</param>
-        /// <param name="enabled">Enable or disable the image</param>
+        /// <param name="toggleDto">Toggle data with enabled state</param>
         /// <returns>No content</returns>
         [HttpPatch("{id}/toggle")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<IActionResult> Toggle(string propertyId, string id, [FromQuery] bool enabled)
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Toggle(string propertyId, string id, [FromBody] TogglePropertyImageDto toggleDto)
         {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
             try
             {
                 var image = await _imageService.GetImageByIdAsync(id);
@@ -291,7 +297,7 @@ namespace Million.API.Controllers
                     return NotFound($"Image with ID '{id}' not found for property '{propertyId}'");
                 }
 
-                await _imageService.ToggleImageAsync(id, enabled);
+                await _imageService.ToggleImageAsync(id, toggleDto.Enabled);
                 return NoContent();
             }
             catch (Exception ex)

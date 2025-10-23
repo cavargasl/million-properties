@@ -33,4 +33,10 @@ namespace Million.API.DTOs
 
         public bool Enabled { get; set; }
     }
+
+    public class TogglePropertyImageDto
+    {
+        [Required(ErrorMessage = "Enabled field is required")]
+        public bool Enabled { get; set; }
+    }
 }

@@ -621,6 +621,7 @@ namespace Million.API.Controllers.Tests
         {
             // Arrange
             var image = CreateTestImageDto("1", "prop1");
+            var toggleDto = new TogglePropertyImageDto { Enabled = false };
 
             _mockImageService!
                 .Setup(service => service.GetImageByIdAsync("1"))
@@ -631,7 +632,7 @@ namespace Million.API.Controllers.Tests
                 .ReturnsAsync(true);
 
             // Act
-            var result = await _controller!.Toggle("prop1", "1", false);
+            var result = await _controller!.Toggle("prop1", "1", toggleDto);
 
             // Assert
             var noContentResult = result as NoContentResult;
@@ -645,12 +646,14 @@ namespace Million.API.Controllers.Tests
         public async Task Toggle_ReturnsNotFound_WhenImageDoesNotExist()
         {
             // Arrange
+            var toggleDto = new TogglePropertyImageDto { Enabled = true };
+
             _mockImageService!
                 .Setup(service => service.GetImageByIdAsync("999"))
                 .ReturnsAsync((PropertyImageDto?)null);
 
             // Act
-            var result = await _controller!.Toggle("prop1", "999", true);
+            var result = await _controller!.Toggle("prop1", "999", toggleDto);
 
             // Assert
             var notFoundResult = result as NotFoundObjectResult;
@@ -665,6 +668,7 @@ namespace Million.API.Controllers.Tests
         {
             // Arrange
             var image = CreateTestImageDto("1", "prop1");
+            var toggleDto = new TogglePropertyImageDto { Enabled = true };
 
             _mockImageService!
                 .Setup(service => service.GetImageByIdAsync("1"))
@@ -675,7 +679,7 @@ namespace Million.API.Controllers.Tests
                 .ThrowsAsync(new Exception("Database error"));
 
             // Act
-            var result = await _controller!.Toggle("prop1", "1", true);
+            var result = await _controller!.Toggle("prop1", "1", toggleDto);
 
             // Assert
             var statusCodeResult = result as ObjectResult;
