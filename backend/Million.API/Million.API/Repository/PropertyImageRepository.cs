@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace Million.API.Repository
 {
-    public class PropertyImageRepository : Repository<PropertyImage>
+    public class PropertyImageRepository : Repository<PropertyImage>, IPropertyImageRepository
     {
         public PropertyImageRepository(IOptions<MongoDbSettings> settings) : base(settings)
         {

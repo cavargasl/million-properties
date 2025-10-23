@@ -12,10 +12,10 @@ namespace Million.API.Controllers
     [Produces("application/json")]
     public class OwnersController : ControllerBase
     {
-        private readonly OwnerService _ownerService;
+        private readonly IOwnerService _ownerService;
         private readonly ILogger<OwnersController> _logger;
 
-        public OwnersController(OwnerService ownerService, ILogger<OwnersController> logger)
+        public OwnersController(IOwnerService ownerService, ILogger<OwnersController> logger)
         {
             _ownerService = ownerService;
             _logger = logger;
@@ -123,7 +123,7 @@ namespace Million.API.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Errores de validación de negocio
+                // Errores de validaciï¿½n de negocio
                 _logger.LogWarning(ex, "Validation error creating owner");
                 return UnprocessableEntity(new { error = ex.Message });
             }

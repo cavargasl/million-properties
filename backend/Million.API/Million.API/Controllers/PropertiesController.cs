@@ -9,10 +9,10 @@ namespace Million.API.Controllers
     [Produces("application/json")]
     public class PropertiesController : ControllerBase
     {
-        private readonly PropertyService _propertyService;
+        private readonly IPropertyService _propertyService;
         private readonly ILogger<PropertiesController> _logger;
 
-        public PropertiesController(PropertyService propertyService, ILogger<PropertiesController> logger)
+        public PropertiesController(IPropertyService propertyService, ILogger<PropertiesController> logger)
         {
             _propertyService = propertyService;
             _logger = logger;
@@ -111,7 +111,7 @@ namespace Million.API.Controllers
         {
             try
             {
-                // Usar el filtro vacío para obtener todas las propiedades
+                // Usar el filtro vacï¿½o para obtener todas las propiedades
                 var filterDto = new PropertyFilterDto();
                 var properties = await _propertyService.SearchPropertiesAsync(filterDto);
                 return Ok(properties);
@@ -175,7 +175,7 @@ namespace Million.API.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Errores de validación de negocio
+                // Errores de validaciï¿½n de negocio
                 _logger.LogWarning(ex, "Validation error creating property");
                 return UnprocessableEntity(new { error = ex.Message });
             }

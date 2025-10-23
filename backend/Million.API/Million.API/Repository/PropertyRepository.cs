@@ -7,7 +7,7 @@ using MongoDB.Driver;
 namespace Million.API.Repository
 {
 
-    public class PropertyRepository : Repository<Property>
+    public class PropertyRepository : Repository<Property>, IPropertyRepository
     {
         public PropertyRepository(IOptions<MongoDbSettings> settings) : base(settings)
         {

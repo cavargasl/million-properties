@@ -4,16 +4,16 @@ using Million.API.Repository;
 
 namespace Million.API.Services
 {
-    public class PropertyService
+    public class PropertyService : IPropertyService
     {
-        private readonly PropertyRepository _propertyRepository;
-        private readonly PropertyImageRepository _imageRepository;
-        private readonly OwnerRepository _ownerRepository;
+        private readonly IPropertyRepository _propertyRepository;
+        private readonly IPropertyImageRepository _imageRepository;
+        private readonly IOwnerRepository _ownerRepository;
 
         public PropertyService(
-            PropertyRepository propertyRepository,
-            PropertyImageRepository imageRepository,
-            OwnerRepository ownerRepository)
+            IPropertyRepository propertyRepository,
+            IPropertyImageRepository imageRepository,
+            IOwnerRepository ownerRepository)
         {
             _propertyRepository = propertyRepository;
             _imageRepository = imageRepository;

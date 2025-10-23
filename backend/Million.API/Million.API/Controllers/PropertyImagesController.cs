@@ -9,10 +9,10 @@ namespace Million.API.Controllers
     [Produces("application/json")]
     public class PropertyImagesController : ControllerBase
     {
-        private readonly PropertyImageService _imageService;
+        private readonly IPropertyImageService _imageService;
         private readonly ILogger<PropertyImagesController> _logger;
 
-        public PropertyImagesController(PropertyImageService imageService, ILogger<PropertyImagesController> logger)
+        public PropertyImagesController(IPropertyImageService imageService, ILogger<PropertyImagesController> logger)
         {
             _imageService = imageService;
             _logger = logger;
@@ -140,13 +140,13 @@ namespace Million.API.Controllers
                 return BadRequest(ModelState);
             }
 
-            // Validar que la lista no esté vacía
+            // Validar que la lista no estï¿½ vacï¿½a
             if (imageDtos == null || imageDtos.Count == 0)
             {
                 return BadRequest(new { error = "At least one image is required" });
             }
 
-            // Validar límite máximo de imágenes
+            // Validar lï¿½mite mï¿½ximo de imï¿½genes
             if (imageDtos.Count > 10)
             {
                 return BadRequest(new { error = "Cannot upload more than 10 images at once" });

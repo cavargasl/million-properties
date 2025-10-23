@@ -7,11 +7,11 @@ namespace Million.API.Services
     /// <summary>
     /// Service layer for Owner business logic and DTO mapping
     /// </summary>
-    public class OwnerService
+    public class OwnerService : IOwnerService
     {
-        private readonly OwnerRepository _ownerRepository;
+        private readonly IOwnerRepository _ownerRepository;
 
-        public OwnerService(OwnerRepository ownerRepository)
+        public OwnerService(IOwnerRepository ownerRepository)
         {
             _ownerRepository = ownerRepository;
         }
@@ -65,7 +65,7 @@ namespace Million.API.Services
                 throw new InvalidOperationException($"Owner with name '{createDto.Name}' already exists");
             }
 
-            // DTO ? Entity
+            // DTO → Entity
             var owner = new Owner
             {
                 Name = createDto.Name,
@@ -76,7 +76,7 @@ namespace Million.API.Services
 
             await _ownerRepository.CreateAsync(owner);
 
-            // Entity ? DTO
+            // Entity → DTO
             return MapToDto(owner);
         }
 
@@ -89,7 +89,7 @@ namespace Million.API.Services
             var existingOwner = await _ownerRepository.GetByIdAsync(id);
             if (existingOwner == null) return null;
 
-            // DTO ? Entity (actualizar propiedades)
+            // DTO → Entity (actualizar propiedades)
             existingOwner.Name = updateDto.Name;
             existingOwner.Address = updateDto.Address;
             existingOwner.Photo = updateDto.Photo;

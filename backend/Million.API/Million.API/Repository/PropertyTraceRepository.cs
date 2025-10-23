@@ -6,7 +6,7 @@ using ASP.MongoDb.API.Repository;
 
 namespace Million.API.Repository
 {
-    public class PropertyTraceRepository : Repository<PropertyTrace>
+    public class PropertyTraceRepository : Repository<PropertyTrace>, IPropertyTraceRepository
     {
         public PropertyTraceRepository(IOptions<MongoDbSettings> settings) : base(settings)
         {

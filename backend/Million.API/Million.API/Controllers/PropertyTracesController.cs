@@ -9,10 +9,10 @@ namespace Million.API.Controllers
     [Produces("application/json")]
     public class PropertyTracesController : ControllerBase
     {
-        private readonly PropertyTraceService _traceService;
+        private readonly IPropertyTraceService _traceService;
         private readonly ILogger<PropertyTracesController> _logger;
 
-        public PropertyTracesController(PropertyTraceService traceService, ILogger<PropertyTracesController> logger)
+        public PropertyTracesController(IPropertyTraceService traceService, ILogger<PropertyTracesController> logger)
         {
             _traceService = traceService;
             _logger = logger;
@@ -143,7 +143,7 @@ namespace Million.API.Controllers
             }
             catch (ArgumentException ex)
             {
-                // Errores de validación de negocio
+                // Errores de validaciï¿½n de negocio
                 _logger.LogWarning(ex, "Validation error creating trace for property {PropertyId}", propertyId);
                 return UnprocessableEntity(new { error = ex.Message });
             }

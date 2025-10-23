@@ -6,7 +6,7 @@ using MongoDB.Driver;
 
 namespace Million.API.Repository
 {
-    public class OwnerRepository : Repository<Owner>
+    public class OwnerRepository : Repository<Owner>, IOwnerRepository
     {
         public OwnerRepository(IOptions<MongoDbSettings> settings) : base(settings)
         {

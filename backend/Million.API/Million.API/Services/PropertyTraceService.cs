@@ -4,14 +4,14 @@ using Million.API.Repository;
 
 namespace Million.API.Services
 {
-    public class PropertyTraceService
+    public class PropertyTraceService : IPropertyTraceService
     {
-        private readonly PropertyTraceRepository _traceRepository;
-        private readonly PropertyRepository _propertyRepository;
+        private readonly IPropertyTraceRepository _traceRepository;
+        private readonly IPropertyRepository _propertyRepository;
 
         public PropertyTraceService(
-            PropertyTraceRepository traceRepository,
-            PropertyRepository propertyRepository)
+            IPropertyTraceRepository traceRepository,
+            IPropertyRepository propertyRepository)
         {
             _traceRepository = traceRepository;
             _propertyRepository = propertyRepository;

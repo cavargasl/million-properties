@@ -10,16 +10,16 @@ builder.Services.Configure<MongoDbSettings>(
     builder.Configuration.GetSection(nameof(MongoDbSettings)));
 
 // Register Repositories (Singleton for MongoDB collections)
-builder.Services.AddSingleton<OwnerRepository>();
-builder.Services.AddSingleton<PropertyRepository>();
-builder.Services.AddSingleton<PropertyImageRepository>();
-builder.Services.AddSingleton<PropertyTraceRepository>();
+builder.Services.AddSingleton<IOwnerRepository, OwnerRepository>();
+builder.Services.AddSingleton<IPropertyRepository, PropertyRepository>();
+builder.Services.AddSingleton<IPropertyImageRepository, PropertyImageRepository>();
+builder.Services.AddSingleton<IPropertyTraceRepository, PropertyTraceRepository>();
 
 // Register Services (Scoped for business logic)
-builder.Services.AddScoped<OwnerService>();
-builder.Services.AddScoped<PropertyService>();
-builder.Services.AddScoped<PropertyImageService>();
-builder.Services.AddScoped<PropertyTraceService>();
+builder.Services.AddScoped<IOwnerService, OwnerService>();
+builder.Services.AddScoped<IPropertyService, PropertyService>();
+builder.Services.AddScoped<IPropertyImageService, PropertyImageService>();
+builder.Services.AddScoped<IPropertyTraceService, PropertyTraceService>();
 
 // Legacy service (if still needed)
 builder.Services.AddSingleton<MongoDbService>();
