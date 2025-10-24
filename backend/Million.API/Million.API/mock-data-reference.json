@@ -1,0 +1,226 @@
+{
+  "mockData": {
+    "owners": [
+      {
+        "name": "Juan Pérez García",
+        "address": "Calle Principal #123, Bogotá",
+        "photo": "https://i.pravatar.cc/150?img=12",
+        "birthday": "1985-03-15"
+      },
+      {
+        "name": "María Rodríguez López",
+        "address": "Carrera 7 #45-67, Medellín",
+        "photo": "https://i.pravatar.cc/150?img=5",
+        "birthday": "1990-07-22"
+      },
+      {
+        "name": "Carlos Martínez Sánchez",
+        "address": "Avenida El Dorado #89-12, Cali",
+        "photo": "https://i.pravatar.cc/150?img=33",
+        "birthday": "1978-11-08"
+      },
+      {
+        "name": "Ana Gómez Fernández",
+        "address": "Calle 100 #15-20, Cartagena",
+        "photo": "https://i.pravatar.cc/150?img=9",
+        "birthday": "1995-02-14"
+      },
+      {
+        "name": "Luis Fernando Castro",
+        "address": "Transversal 45 #67-89, Barranquilla",
+        "photo": "https://i.pravatar.cc/150?img=52",
+        "birthday": "1982-09-30"
+      },
+      {
+        "name": "Diana Patricia Morales",
+        "address": "Diagonal 25 #34-56, Bucaramanga",
+        "photo": "https://i.pravatar.cc/150?img=20",
+        "birthday": "1988-05-18"
+      },
+      {
+        "name": "Roberto Silva Ramírez",
+        "address": "Calle 50 #23-45, Pereira",
+        "photo": "https://i.pravatar.cc/150?img=60",
+        "birthday": "1975-12-03"
+      },
+      {
+        "name": "Laura Sofía Jiménez",
+        "address": "Carrera 15 #78-90, Manizales",
+        "photo": "https://i.pravatar.cc/150?img=28",
+        "birthday": "1992-04-25"
+      }
+    ],
+    "properties": [
+      {
+        "name": "Apartamento Moderno en Chapinero",
+        "address": "Calle 63 #7-45, Chapinero, Bogotá",
+        "price": 450000000,
+        "codeInternal": "PROP-2024-001",
+        "year": 2022,
+        "ownerIndex": 0
+      },
+      {
+        "name": "Casa Campestre en La Calera",
+        "address": "Vereda El Salitre, Km 5, La Calera",
+        "price": 850000000,
+        "codeInternal": "PROP-2024-002",
+        "year": 2020,
+        "ownerIndex": 0
+      },
+      {
+        "name": "Penthouse El Poblado Premium",
+        "address": "Carrera 43A #10-50, El Poblado, Medellín",
+        "price": 1200000000,
+        "codeInternal": "PROP-2024-003",
+        "year": 2023,
+        "ownerIndex": 1
+      },
+      {
+        "name": "Apartamento Vista al Mar",
+        "address": "Avenida San Martín #8-120, Bocagrande, Cartagena",
+        "price": 680000000,
+        "codeInternal": "PROP-2024-004",
+        "year": 2021,
+        "ownerIndex": 3
+      },
+      {
+        "name": "Oficina Centro Internacional",
+        "address": "Carrera 7 #26-20, Piso 15, Bogotá",
+        "price": 320000000,
+        "codeInternal": "PROP-2024-005",
+        "year": 2019,
+        "ownerIndex": 2
+      },
+      {
+        "name": "Local Comercial Unicentro",
+        "address": "Centro Comercial Unicentro, Local 234, Bogotá",
+        "price": 280000000,
+        "codeInternal": "PROP-2024-006",
+        "year": 2018,
+        "ownerIndex": 2
+      },
+      {
+        "name": "Casa Conjunto Cerrado Norte",
+        "address": "Calle 170 #54-23, Conjunto Reserva del Bosque",
+        "price": 620000000,
+        "codeInternal": "PROP-2024-007",
+        "year": 2021,
+        "ownerIndex": 4
+      },
+      {
+        "name": "Apartamento Laureles Medellín",
+        "address": "Circular 1 #70-45, Laureles, Medellín",
+        "price": 380000000,
+        "codeInternal": "PROP-2024-008",
+        "year": 2020,
+        "ownerIndex": 1
+      },
+      {
+        "name": "Finca Cafetera Eje Cafetero",
+        "address": "Vereda La Esperanza, Montenegro, Quindío",
+        "price": 950000000,
+        "codeInternal": "PROP-2024-009",
+        "year": 2015,
+        "ownerIndex": 5
+      },
+      {
+        "name": "Studio Amoblado Rosales",
+        "address": "Carrera 7 #72-34, Rosales, Bogotá",
+        "price": 290000000,
+        "codeInternal": "PROP-2024-010",
+        "year": 2022,
+        "ownerIndex": 6
+      },
+      {
+        "name": "Loft Industrial Provenza",
+        "address": "Calle 8 #43E-65, Provenza, Medellín",
+        "price": 520000000,
+        "codeInternal": "PROP-2024-011",
+        "year": 2023,
+        "ownerIndex": 7
+      },
+      {
+        "name": "Casa Colonial Centro Histórico",
+        "address": "Calle del Arsenal #45, Centro, Cartagena",
+        "price": 1500000000,
+        "codeInternal": "PROP-2024-012",
+        "year": 1890,
+        "ownerIndex": 3
+      },
+      {
+        "name": "Apartamento Parque 93",
+        "address": "Calle 93B #11-45, Chicó, Bogotá",
+        "price": 580000000,
+        "codeInternal": "PROP-2024-013",
+        "year": 2021,
+        "ownerIndex": 4
+      },
+      {
+        "name": "Casa Moderna Envigado",
+        "address": "Calle 38 Sur #28-45, Envigado, Antioquia",
+        "price": 720000000,
+        "codeInternal": "PROP-2024-014",
+        "year": 2022,
+        "ownerIndex": 5
+      },
+      {
+        "name": "Apartamento Bucaramanga Norte",
+        "address": "Carrera 27 #151-34, Cabecera, Bucaramanga",
+        "price": 410000000,
+        "codeInternal": "PROP-2024-015",
+        "year": 2020,
+        "ownerIndex": 6
+      }
+    ],
+    "imageUrls": [
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=800",
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800",
+      "https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=800",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800",
+      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800",
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800",
+      "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=800",
+      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=800",
+      "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800",
+      "https://images.unsplash.com/photo-1600607688969-a5bfcd646154?w=800"
+    ],
+    "traceTypes": [
+      "Venta inicial",
+      "Actualización de precio",
+      "Renovación",
+      "Remodelación",
+      "Cambio de propietario",
+      "Avalúo comercial",
+      "Actualización catastral"
+    ],
+    "metadata": {
+      "totalOwners": 8,
+      "totalProperties": 15,
+      "imagesPerProperty": "2-4",
+      "tracesPerProperty": "1-3",
+      "country": "Colombia",
+      "cities": [
+        "Bogotá",
+        "Medellín",
+        "Cali",
+        "Cartagena",
+        "Barranquilla",
+        "Bucaramanga",
+        "Pereira",
+        "Manizales",
+        "Envigado",
+        "La Calera",
+        "Montenegro"
+      ],
+      "priceRange": {
+        "min": 280000000,
+        "max": 1500000000,
+        "currency": "COP"
+      },
+      "yearRange": {
+        "min": 1890,
+        "max": 2023
+      }
+    }
+  }
+}

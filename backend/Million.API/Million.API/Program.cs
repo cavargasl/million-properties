@@ -21,6 +21,9 @@ builder.Services.AddScoped<IPropertyService, PropertyService>();
 builder.Services.AddScoped<IPropertyImageService, PropertyImageService>();
 builder.Services.AddScoped<IPropertyTraceService, PropertyTraceService>();
 
+// Register Data Seeder Service
+builder.Services.AddScoped<DataSeederService>();
+
 // Legacy service (if still needed)
 builder.Services.AddSingleton<MongoDbService>();
 

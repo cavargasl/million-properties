@@ -248,7 +248,7 @@ Crear archivo `.env.local`:
 
 ```bash
 # API Backend URL
-NEXT_PUBLIC_API_URL=http://localhost:5000/api
+NEXT_PUBLIC_API_URL=http://localhost:5269/api
 
 # Optional: Development Mode
 NODE_ENV=development
@@ -272,6 +272,43 @@ dotnet run
 
 **API disponible en:**
 - HTTP: `http://localhost:5269`
+- Swagger UI: `http://localhost:5269/swagger`
+
+### Poblar Base de Datos (Opcional)
+
+El proyecto incluye datos de prueba listos para usar. **No necesitas tener MongoDB CLI (mongosh/mongo) instalado.**
+
+#### Opción 1: Script PowerShell (Recomendado)
+
+```bash
+# 1. Inicia la API en una terminal
+cd backend/Million.API/Million.API
+dotnet run
+
+# 2. En otra terminal PowerShell, carga los datos
+.\seed-database.ps1
+
+# O si quieres BORRAR TODO y cargar datos frescos (⚠️ Cuidado)
+.\reset-and-seed.ps1
+```
+
+#### Opción 2: Endpoint API Directo
+
+```bash
+# Solo cargar datos (sin borrar existentes)
+curl -X POST http://localhost:5269/api/database/seed
+
+# Resetear TODO y cargar datos frescos (⚠️ Elimina todos los datos)
+curl -X POST http://localhost:5269/api/database/reset
+```
+
+**Datos incluidos:**
+- 8 Propietarios (diferentes ciudades de Colombia)
+- 15 Propiedades (apartamentos, casas, penthouses)
+- 2-4 Imágenes por propiedad (URLs de Unsplash)
+- 1-3 Trazas por propiedad (historial de cambios)
+
+📖 **Guía de inicio rápido**: [backend/Million.API/Million.API/INICIO_RAPIDO.md](backend/Million.API/Million.API/INICIO_RAPIDO.md)
 
 ### Iniciar Frontend
 
